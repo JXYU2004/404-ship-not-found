@@ -11,4 +11,8 @@ class Ship {
     public String getName() {
         return name;
     }
+
+    public int getYearBuilt() {
+        return yearBuilt;
+    }
 }
