@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://d0lryi26yd36c"]
+
+[ext_resource type="Script" uid="uid://dwh3s5ye264s0" path="res://ship.gd" id="1_l3rv8"]
+[ext_resource type="Texture2D" uid="uid://b5cqsi8aqwgym" path="res://SpriteFolder/ship 3x1 pixel.png" id="2_4cq66"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v4325"]
+atlas = ExtResource("2_4cq66")
+region = Rect2(100.66669, 22.70523, 231.33334, 543.9945)
+
+[node name="Destroyer" type="Node2D" unique_id=1826027572]
+script = ExtResource("1_l3rv8")
+
+[node name="Ship Button" type="TextureButton" parent="." unique_id=214794640]
+clip_contents = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -82.0
+offset_top = -151.0
+offset_right = 149.0
+offset_bottom = 392.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -0.0010720491
+scale = Vector2(0.6662437, 0.87987214)
+texture_normal = SubResource("AtlasTexture_v4325")
+
+[connection signal="pressed" from="Ship Button" to="." method="_on_ship_button_pressed"]

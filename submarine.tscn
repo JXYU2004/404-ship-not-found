@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://c7vmqka4aaflo"]
+
+[ext_resource type="PackedScene" uid="uid://d0lryi26yd36c" path="res://ship.tscn" id="1_k4f85"]
+[ext_resource type="Texture2D" uid="uid://c3bitqd1y8r7r" path="res://SpriteFolder/submarine top.png" id="2_qvldv"]
+[ext_resource type="Script" uid="uid://3pryccq2qqpi" path="res://submarine.gd" id="2_wxksq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wxksq"]
+atlas = ExtResource("2_qvldv")
+region = Rect2(93.07831, 54.89612, 276.18182, 730.208)
+
+[node name="Submarine" unique_id=1826027572 instance=ExtResource("1_k4f85")]
+script = ExtResource("2_wxksq")
+
+[node name="Ship Button" parent="." index="0" unique_id=214794640]
+offset_left = -103.99999
+offset_top = -198.99998
+offset_right = 172.0
+offset_bottom = 531.0
+texture_normal = SubResource("AtlasTexture_wxksq")

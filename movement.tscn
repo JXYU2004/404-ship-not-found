@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://d2vxrbaxpx6fg"]
+
+[ext_resource type="Texture2D" uid="uid://cop3a4kr0cw38" path="res://SpriteFolder/movement pixel.png" id="1_rqmv5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2bkep"]
+atlas = ExtResource("1_rqmv5")
+region = Rect2(8.760315, 3.2494354, 462.2052, 517.3654)
+
+[node name="Movement" type="Node2D" unique_id=1642915383]
+
+[node name="Move Up" type="TextureButton" parent="." unique_id=1841068226]
+offset_left = 432.0
+offset_top = 49.999996
+offset_right = 894.0
+offset_bottom = 567.0
+scale = Vector2(0.29871476, 0.35128516)
+texture_normal = SubResource("AtlasTexture_2bkep")
+
+[node name="Move Down" type="TextureButton" parent="." unique_id=853116385]
+offset_left = 570.0
+offset_top = 543.00006
+offset_right = 1032.0
+offset_bottom = 1060.0
+rotation = -3.1415927
+scale = Vector2(0.29871476, 0.35128516)
+texture_normal = SubResource("AtlasTexture_2bkep")
+
+[node name="Move Left" type="TextureButton" parent="." unique_id=538940013]
+offset_left = 238.0
+offset_top = 375.0
+offset_right = 700.00006
+offset_bottom = 892.0
+rotation = -1.5707964
+scale = Vector2(0.29871476, 0.35128516)
+texture_normal = SubResource("AtlasTexture_2bkep")
+
+[node name="Move Right" type="TextureButton" parent="." unique_id=1971363139]
+offset_left = 751.0
+offset_top = 231.99998
+offset_right = 1213.0
+offset_bottom = 749.0
+rotation = 1.5707964
+scale = Vector2(0.29871476, 0.35128516)
+texture_normal = SubResource("AtlasTexture_2bkep")

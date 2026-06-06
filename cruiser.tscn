@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://c8pyx2uucqqum"]
+
+[ext_resource type="PackedScene" uid="uid://d0lryi26yd36c" path="res://ship.tscn" id="1_p526x"]
+[ext_resource type="Script" uid="uid://bieaq7y0y52up" path="res://cruiser.gd" id="2_ob1kg"]
+[ext_resource type="Texture2D" uid="uid://doyrc33uhx1pk" path="res://SpriteFolder/Ship 2x1 pixel.png" id="3_25kg4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xsuda"]
+atlas = ExtResource("3_25kg4")
+
+[node name="Cruiser(2x1)" unique_id=1826027572 instance=ExtResource("1_p526x")]
+script = ExtResource("2_ob1kg")
+
+[node name="Ship Button" parent="." index="0" unique_id=214794640]
+offset_left = -177.99995
+offset_top = -367.99997
+offset_right = 322.00006
+offset_bottom = 496.00003
+texture_normal = SubResource("AtlasTexture_xsuda")

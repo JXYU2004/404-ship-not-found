@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://dqd05mstqxyx4"]
+
+[ext_resource type="Texture2D" uid="uid://btnqjeox640fr" path="res://SpriteFolder/Energy_empty-removebg.png" id="1_4h7ao"]
+[ext_resource type="Texture2D" uid="uid://femqf8povbgn" path="res://SpriteFolder/Energy_1_out_of_4-removebg.png" id="2_ck4u4"]
+[ext_resource type="Texture2D" uid="uid://px6ahpu8gpwd" path="res://SpriteFolder/Energy_2_out_of_4-removebg.png" id="3_phk74"]
+[ext_resource type="Texture2D" uid="uid://bea0fgridur13" path="res://SpriteFolder/Energy_3_out_of_4-removebg.png" id="4_0nb1x"]
+[ext_resource type="Texture2D" uid="uid://bht7lkw2rwy1s" path="res://SpriteFolder/Energy_full-removebg.png" id="5_4kty7"]
+[ext_resource type="Script" uid="uid://b5ycbyy1e8qsa" path="res://EnergyBar.gd" id="6_ck4u4"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6jc1r"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_4h7ao")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_ck4u4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_phk74")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_0nb1x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_4kty7")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="EnergyBar" type="AnimatedSprite2D" unique_id=1464382014]
+position = Vector2(173, 182)
+sprite_frames = SubResource("SpriteFrames_6jc1r")
+script = ExtResource("6_ck4u4")

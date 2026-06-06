@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://d3b6wecgct5ei"]
+
+[ext_resource type="Script" uid="uid://cigo6gfq4w4tq" path="res://ship_lives.gd" id="1_jtsnm"]
+[ext_resource type="Texture2D" uid="uid://ba381y0t74t11" path="res://SpriteFolder/ship_life_1.0-removebg.png" id="1_mm8ji"]
+
+[node name="Ship lives" type="HBoxContainer" unique_id=1545419387]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_jtsnm")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1167792278]
+layout_mode = 2
+texture = ExtResource("1_mm8ji")
+
+[node name="TextureRect2" type="TextureRect" parent="." unique_id=1002143604]
+layout_mode = 2
+texture = ExtResource("1_mm8ji")
+
+[node name="TextureRect3" type="TextureRect" parent="." unique_id=1734683854]
+layout_mode = 2
+texture = ExtResource("1_mm8ji")

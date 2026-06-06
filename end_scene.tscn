@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://dtc88wvs7ekmi"]
+
+[ext_resource type="Script" uid="uid://df7uektsngqtd" path="res://end_scene.gd" id="1_jvrxn"]
+[ext_resource type="FontFile" uid="uid://be0c25qbc217d" path="res://font404 2.ttf" id="2_vitp6"]
+
+[node name="EndScene" type="Node2D" unique_id=1990753312]
+script = ExtResource("1_jvrxn")
+
+[node name="Label" type="Label" parent="." unique_id=1180899494]
+offset_left = 380.0
+offset_top = 184.0
+offset_right = 814.0
+offset_bottom = 428.0
+theme_override_fonts/font = ExtResource("2_vitp6")

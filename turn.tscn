@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://covmov40evgwq"]
+
+[ext_resource type="FontFile" uid="uid://be0c25qbc217d" path="res://font404 2.ttf" id="1_fexi5"]
+[ext_resource type="Script" uid="uid://cqycwhdfi2j81" path="res://turn.gd" id="2_davwy"]
+
+[node name="Turn" type="Label" unique_id=1452108096]
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_colors/font_color = Color(0.02, 0.02, 0.02, 1)
+theme_override_fonts/font = ExtResource("1_fexi5")
+theme_override_font_sizes/font_size = 30
+script = ExtResource("2_davwy")
