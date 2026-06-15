@@ -87,7 +87,7 @@ func _process(delta: float) -> void:
 		for x in range(4):
 
 			preview_coords.append(
-				cell + Vector2i(-x, 0)
+				cell + Vector2i(x, 0)
 			)
 
 	elif attack_mode == "special vertical":

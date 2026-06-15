@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://ckxeyqjfr2mdx"]
 
 [ext_resource type="Script" uid="uid://dkd1x28i0fnwe" path="res://ShipManager.gd" id="1_w0d6r"]
-[ext_resource type="Texture2D" uid="uid://dg3ifuq3hb420" path="res://testing 2.jpg" id="2_746qv"]
+[ext_resource type="Texture2D" uid="uid://bwi14iuk4r3cx" path="res://testing 2.jpg" id="2_746qv"]
 [ext_resource type="Texture2D" uid="uid://bxc1idvle5603" path="res://testing yes.jpg" id="3_4p1xe"]
 [ext_resource type="Script" uid="uid://cskn5wnmlx2re" path="res://ship_placement.gd" id="4_746qv"]
 [ext_resource type="Texture2D" uid="uid://doyrc33uhx1pk" path="res://SpriteFolder/Ship 2x1 pixel.png" id="5_1gxaf"]
@@ -16,20 +16,8 @@ separation = Vector2i(2, 5)
 texture_region_size = Vector2i(26, 26)
 0:0/0 = 0
 1:0/0 = 0
-2:0/0 = 0
-3:0/0 = 0
 0:1/0 = 0
 1:1/0 = 0
-2:1/0 = 0
-3:1/0 = 0
-0:2/0 = 0
-1:2/0 = 0
-2:2/0 = 0
-3:2/0 = 0
-0:3/0 = 0
-1:3/0 = 0
-2:3/0 = 0
-3:3/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_lc7k4"]
 texture = ExtResource("3_4p1xe")

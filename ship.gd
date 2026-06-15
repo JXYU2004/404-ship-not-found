@@ -61,3 +61,10 @@ func _on_hit() -> void:
 	if hit_point == 0 and not sinked:
 		sinked = true
 		ship_button.disabled = true
+
+func scanned(cell: Vector2i) -> bool:
+	if cell in positions:
+		return true
+	else:
+		return false
+	

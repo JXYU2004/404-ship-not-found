@@ -1,0 +1,22 @@
+[gd_scene format=4 uid="uid://bjalt5vov8k5g"]
+
+[ext_resource type="Texture2D" uid="uid://dgn5q5umycwt3" path="res://SpriteFolder/scanner stuff.jpg" id="1_0d54j"]
+[ext_resource type="Script" uid="uid://c1gk8v5s770h4" path="res://radar.gd" id="2_klbcc"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_klbcc"]
+texture = ExtResource("1_0d54j")
+separation = Vector2i(4, 4)
+texture_region_size = Vector2i(26, 26)
+0:1/0 = 0
+1:1/0 = 0
+1:0/0 = 0
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_rlo7y"]
+tile_size = Vector2i(26, 26)
+sources/0 = SubResource("TileSetAtlasSource_klbcc")
+
+[node name="radar" type="TileMapLayer" unique_id=1125651709]
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAABAAEAAAAAAAAAAAACAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAABAAIAAAAAAAAAAAACAAIAAAAAAAAAAAA=")
+tile_set = SubResource("TileSet_rlo7y")
+script = ExtResource("2_klbcc")

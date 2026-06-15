@@ -259,9 +259,9 @@ func _on_ready_button_pressed() -> void:
 		
 		PlayerBoard.curr_layout = curr_layout
 		
-		rpc("send_layout_to_enemy", curr_layout)
-		
-		rpc("notify_ready_to_opponent")
+		for peer_id in multiplayer.get_peers():
+			rpc_id(peer_id, "send_layout_to_enemy", curr_layout)
+			rpc_id(peer_id, "notify_ready_to_opponent")
 		
 		proceed_to_main()
 

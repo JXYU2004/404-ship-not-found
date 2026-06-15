@@ -14,12 +14,13 @@ scale = Vector2(6.3154993, 2.9352453)
 text = "Host"
 
 [node name="Join Button" type="Button" parent="." unique_id=1573353921]
+visible = false
 offset_left = 462.0
 offset_top = 442.0
 offset_right = 500.0
 offset_bottom = 473.0
 scale = Vector2(6.321943, 3.4072526)
-text = "Join"
+text = "Invite"
 
 [connection signal="pressed" from="Host Button" to="." method="_on_host_button_pressed"]
 [connection signal="pressed" from="Join Button" to="." method="_on_join_button_pressed"]

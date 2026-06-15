@@ -8,6 +8,10 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Latest"
@@ -17,6 +21,10 @@ config/features=PackedStringArray("4.6", "GL Compatibility")
 [autoload]
 
 NetworkManager="*uid://bvwa6dsqw64ny"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godotsteam/plugin.cfg")
 
 [physics]
 
@@ -28,7 +36,14 @@ textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-environment/defaults/default_clear_color=Color(0.29582807, 0.08054162, 0.7651127, 1)
+environment/defaults/default_clear_color=Color(0.295828, 0.0805416, 0.765113, 1)
 2d/snap/snap_2d_transforms_to_pixel=true
 2d/snap/snap_2d_vertices_to_pixel=true
 2d/canvas_textures/default_texture_filter=0
+
+[steam]
+
+initialization/app_id=480
+initialization/initialize_on_startup=false
+initialization/embed_callbacks=false
+multiplayer_peer/max_channels=4

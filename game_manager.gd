@@ -11,6 +11,8 @@ var opponentTurnEnd := false
 var attacking_pos := Vector2i(-1, -1)
 var attack_mode := "normal"
 
+@onready var EventManager = $"../EventManager"
+
 @onready var player_board: Node2D = $"../PlayerBoard"
 
 @onready var enemy_board: Node2D = $"../EnemyBoard"
@@ -23,6 +25,9 @@ var currEnergy = 4:
 			end_my_turn()
 			
 
+var energy_surge_active = false
+var energy_surge_used = false
+
 func end_my_turn() -> void:
 	myTurnEnd = true
 	
@@ -30,7 +35,8 @@ func end_my_turn() -> void:
 	enemy_board.attacking = false
 	
 	
-	rpc("notify_turn_end_to_opponent")
+	for peer_id in multiplayer.get_peers():
+		rpc_id(peer_id, "notify_turn_end_to_opponent")
 	
 	next_turn()
 
@@ -46,38 +52,67 @@ func next_turn() -> void:
 		await get_tree().create_timer(0.1).timeout
 		
 		enemy_board.check_hit_miss()
+		player_board.update_radar()
 		
 		await get_tree().create_timer(0.1).timeout
 		
 		player_board.update_health()
 		
+		
 		currTurn += 1
+		energy_surge_active = false
+		energy_surge_used = false
 		print("currTurn: ", currTurn)
+		
+		if currTurn > 1 and currTurn % 4 == 0:
+			if multiplayer.is_server():
+				for peer_id in multiplayer.get_peers():
+					rpc_id(peer_id, "trigger_random_event")
+				trigger_random_event()
 		
 		if currTurn > 1 and currTurn % 2 == 1:
 			if multiplayer.is_server():
 				var side = randi_range(0, 3)
-				rpc("map_shrink_all", side)
+				
+				for peer_id in multiplayer.get_peers():
+					rpc_id(peer_id, "map_shrink_all", side)
+				
+				map_shrink_all(side)
 		
 		currEnergy = maxEnergy
 		myTurnEnd = false
 		opponentTurnEnd = false
 
-func consume_energy(amount: int) -> bool:
+func consume_energy(amount):
+
 	if currEnergy >= amount:
+
 		currEnergy -= amount
-		print("Energy remained:", currEnergy)
+
+		if energy_surge_active \
+		and not energy_surge_used \
+		and currEnergy <= 2:
+
+			currEnergy += 2
+
+			energy_surge_used = true
+
+			print("Energy Surge Triggered!")
+			print("Energy:", currEnergy)
+
 		return true
-	else:
-		print("Not enough")
-		return false
+
+	return false
 		
 
 @rpc("any_peer", "call_local")
 func map_shrink_all(side: int) -> void:
 	player_board._decrease_map_size(side)
 	enemy_board._decrease_map_size(side)
-	
+
+@rpc("any_peer", "call_local")
+func trigger_random_event():
+	EventManager.trigger_random_event()
 
 @rpc("any_peer", "call_local", "reliable")
 func declare_winner(loser: int) -> void:

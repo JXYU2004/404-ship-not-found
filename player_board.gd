@@ -12,9 +12,15 @@ static var curr_layout = null
 @onready var submarine_life = $"Submarine life"
 @onready var destroyer_life = $"Destroyer life"
 @onready var cruiser_life = $"cruiser life"
+@onready var radar = $radar
 
 var active_ship = null
 var moving = false
+
+var scanned_coord : Array[Vector2i] = []
+var scanned = false
+var scanned_area: Array[ColorRect] = []
+var scanned_pivot: Vector2i = Vector2i(-1, -1)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -159,3 +165,72 @@ func update_health() -> void:
 	submarine_life.update_health(submarine.hit_point)
 	cruiser_life.update_health(cruiser.hit_point)
 	destroyer_life.update_health(destroyer.hit_point)
+
+
+func _on_radar_button_pressed() -> void:
+	if cruiser.sinked or scanned:
+		return
+	
+	if GameManager.consume_energy(2):
+		clear_all_scans()
+		scanned = true
+		get_cruiser_scan_coord()
+		
+		for coord in scanned_coord:
+			var rect = ColorRect.new()
+			
+			rect.color = Color(0.4, 1.0, 0.0, 0.35) 
+			rect.z_index = 5 
+			
+			rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			
+			var tile_size = tilemap.tile_set.tile_size
+			rect.size = Vector2(tile_size)
+			rect.position = tilemap.map_to_local(coord) - Vector2(tile_size) / 2
+			
+			add_child(rect)
+			
+			scanned_area.append(rect)
+
+func get_cruiser_scan_coord() -> void:
+	
+	scanned_coord.clear()
+	
+	scanned_pivot = cruiser.get_ship_pos()[0]
+	
+	for x in range(-1, 2):
+		for y in range(-1, 2):
+			var cell = scanned_pivot + Vector2i(x, y)
+			if _inside_board(cell):
+				scanned_coord.append(cell)
+
+func clear_all_scans() -> void:
+	for x in range(3):
+		for y in range(3):
+			radar.set_cell(Vector2i(x, y), 0, Vector2i(0, 0))
+	
+	for cell in scanned_area:
+		cell.queue_free()
+	
+	scanned_area.clear()
+	scanned_coord.clear()
+	scanned_pivot = Vector2i(-1, -1)
+	scanned = false
+	
+	
+func update_radar() -> void:
+	if not scanned:
+		clear_all_scans()
+		return
+	scanned = false
+	
+	var enemy_positions: Array[Vector2i] = []
+	enemy_positions.append_array(enemy_board.destroyer.get_ship_pos())
+	enemy_positions.append_array(enemy_board.cruiser.get_ship_pos())
+	
+	for coord in scanned_coord:
+		if coord in enemy_positions:
+			var offset = coord - scanned_pivot
+			var detected_cell = Vector2i(offset.x + 1, offset.y + 1)
+			radar.detected(detected_cell)
+	
