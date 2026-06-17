@@ -17,6 +17,7 @@ var attack_mode := "normal"
 
 @onready var enemy_board: Node2D = $"../EnemyBoard"
 
+@onready var history = $"../MatchHistoryManager"
 
 var currEnergy = 4:
 	set(value):
@@ -35,8 +36,7 @@ func end_my_turn() -> void:
 	enemy_board.attacking = false
 	
 	
-	for peer_id in multiplayer.get_peers():
-		rpc_id(peer_id, "notify_turn_end_to_opponent")
+	rpc_id(NetworkManager.opponent_id, "notify_turn_end_to_opponent")
 	
 	next_turn()
 
@@ -60,24 +60,24 @@ func next_turn() -> void:
 		
 		
 		currTurn += 1
+		
+		history.add_entry(
+			"Turn %d started"
+			% currTurn
+		)
+		
 		energy_surge_active = false
 		energy_surge_used = false
 		print("currTurn: ", currTurn)
 		
 		if currTurn > 1 and currTurn % 4 == 0:
-			if multiplayer.is_server():
-				for peer_id in multiplayer.get_peers():
-					rpc_id(peer_id, "trigger_random_event")
-				trigger_random_event()
+			rpc_id(NetworkManager.opponent_id, "trigger_random_event")
 		
 		if currTurn > 1 and currTurn % 2 == 1:
-			if multiplayer.is_server():
-				var side = randi_range(0, 3)
+			var side = randi_range(0, 3)
 				
-				for peer_id in multiplayer.get_peers():
-					rpc_id(peer_id, "map_shrink_all", side)
+			rpc_id(NetworkManager.opponent_id, "map_shrink_all", side)
 				
-				map_shrink_all(side)
 		
 		currEnergy = maxEnergy
 		myTurnEnd = false

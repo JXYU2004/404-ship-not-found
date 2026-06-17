@@ -3,9 +3,16 @@ extends Node
 
 @onready var player_board = $"../PlayerBoard"
 
+@onready var history = $"../MatchHistoryManager"
+
 func trigger_random_current():
 
 	print("Random Ocean Current Activated!")
+	
+	history.add_entry(
+		"Turn %d: Ocean Current activated"
+		% game_manager.currTurn
+	)
 
 	var direction = randi_range(0,3)
 	var distance = randi_range(1,2)
@@ -15,6 +22,11 @@ func trigger_random_current():
 func trigger_energy_surge():
 
 	print("Energy Surge Activated!")
+	
+	history.add_entry(
+		"Turn %d: Energy Surge activated"
+		% game_manager.currTurn
+	)
 
 	game_manager.energy_surge_active = true
 	game_manager.energy_surge_used = false

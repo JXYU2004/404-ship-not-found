@@ -4,6 +4,7 @@ class_name PlayerBoard
 static var curr_layout = null
 
 @export var enemy_board: Node
+@onready var history = $"../MatchHistoryManager"
 
 @onready var submarine: Node2D = $Submarine
 @onready var destroyer: Node2D = $Destroyer
@@ -138,10 +139,15 @@ func declare_final_pos() -> void:
 		"Destroyer" = destroyer.get_ship_pos(),
 		"Submarine" = submarine.get_ship_pos()
 	}
-	enemy_board.rpc("receive_final_pos", final_position)
+	enemy_board.rpc_id(NetworkManager.opponent_id, "receive_final_pos", final_position)
 
 @rpc("any_peer", "call_remote")
 func receive_attack(ship_name: String) -> void:
+	history.add_entry(
+		"Turn %d: Enemy hit %s"
+		% [GameManager.currTurn, ship_name]
+	)
+	
 	if ship_name == "destroyer":
 		destroyer._on_hit()
 		print("destroyer remaining health: ", destroyer.hit_point)
@@ -154,12 +160,27 @@ func receive_attack(ship_name: String) -> void:
 
 @rpc("any_peer", "call_remote")
 func receive_miss(cell: Vector2i) -> void:
+	history.add_entry(
+		"Turn %d: Enemy missed at %s"
+		% [GameManager.currTurn, str(cell)]
+	)
 	tilemap.set_cell(cell, 0, Vector2i(1, 0)) ## set cell as exclamation mark
 
 @rpc("any_peer", "call_remote")
 func check_lose() -> void:
 	if cruiser.sinked and submarine.sinked and destroyer.sinked:
 		GameManager.rpc("declare_winner", multiplayer.get_unique_id()) ## declare winner
+	
+	history.add_entry(
+		"Winner: Player 1"
+	)
+
+	history.add_entry(
+		"Total Turns: %d"
+		% GameManager.currTurn
+	)
+
+	history.save_match()
 
 func update_health() -> void:
 	submarine_life.update_health(submarine.hit_point)
@@ -172,6 +193,10 @@ func _on_radar_button_pressed() -> void:
 		return
 	
 	if GameManager.consume_energy(2):
+		history.add_entry(
+			"Turn %d: Cruiser Scout activated"
+			% GameManager.currTurn
+		)
 		clear_all_scans()
 		scanned = true
 		get_cruiser_scan_coord()

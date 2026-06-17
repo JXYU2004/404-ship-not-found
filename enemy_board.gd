@@ -15,7 +15,7 @@ var current_preview_coords : Array[Vector2i] = []
 var hit_count := 0
 
 @onready var cover = $Cover
-
+@onready var history = $"../MatchHistoryManager"
 
 @onready var submarine: Node2D = $Submarine
 @onready var destroyer: Node2D = $Destroyer
@@ -150,6 +150,10 @@ func _on_special_attack_horizontal_pressed() -> void:
 func attack_at_pos(pos: Vector2i) -> void:
 	var inside_board = _inside_board(pos)
 	if attacking and inside_board and GameManager.consume_energy(1):
+		history.add_entry(
+			"Turn %d: Normal Attack used"
+			% GameManager.currTurn
+		)
 		cover.set_cell(pos, 0, Vector2i(0,1))
 		attacking = false
 		
@@ -159,6 +163,10 @@ func attack_at_pos(pos: Vector2i) -> void:
 func special_attack_at_pos(pos: Vector2i) -> void:
 	var inside_board = _inside_board(pos)
 	if attacking and inside_board and GameManager.consume_energy(2):
+		history.add_entry(
+			"Turn %d: Cluster Strike used"
+			% GameManager.currTurn
+		)
 		var tiles = area_covered(pos)
 		for cell in tiles:
 			if _inside_board(cell):
@@ -170,6 +178,19 @@ func special_attack_at_pos(pos: Vector2i) -> void:
 func special_attack_at_pos_horiorvet(pos: Vector2i) -> void:
 	var inside_board = _inside_board(pos)
 	if attacking and inside_board and GameManager.consume_energy(2):
+		
+		if attack_mode == "special horizontal":
+			history.add_entry(
+				"Turn %d: Horizontal Strike used"
+				% GameManager.currTurn
+			)
+
+		elif attack_mode == "special vertical":
+			history.add_entry(
+				"Turn %d: Vertical Strike used"
+				% GameManager.currTurn
+			)
+			
 		var tiles = area_covered_vertical(pos)
 		if (attack_mode == "special horizontal"):
 			tiles = area_covered_horizontal(pos)
@@ -276,13 +297,29 @@ func check_hit_miss() -> void:
 		cover.set_cell(cell, -1) ## erase the cell
 		
 		if cell in destroyer.get_ship_pos():
-			player_board.rpc("receive_attack", "destroyer")
+			history.add_entry(
+				"Turn %d: Hit Destroyer at %s"
+				% [GameManager.currTurn, str(cell)]
+			)
+			player_board.rpc_id(NetworkManager.opponent_id, "receive_attack", "destroyer")
 		elif cell in submarine.get_ship_pos():
-			player_board.rpc("receive_attack", "submarine")
+			history.add_entry(
+				"Turn %d: Hit Submarine at %s"
+				% [GameManager.currTurn, str(cell)]
+			)
+			player_board.rpc_id(NetworkManager.opponent_id, "receive_attack", "submarine")
 		elif cell in cruiser.get_ship_pos():
-			player_board.rpc("receive_attack", "cruiser")
+			history.add_entry(
+				"Turn %d: Hit Cruiser at %s"
+				% [GameManager.currTurn, str(cell)]
+			)
+			player_board.rpc_id(NetworkManager.opponent_id, "receive_attack", "cruiser")
 		else:
-			player_board.rpc("receive_miss", cell)
+			history.add_entry(
+				"Turn %d: Miss at %s"
+				% [GameManager.currTurn, str(cell)]
+			)
+			player_board.rpc_id(NetworkManager.opponent_id, "receive_miss", cell)
 	
 	attack_coord.clear() ## clear attack coordinates
 	

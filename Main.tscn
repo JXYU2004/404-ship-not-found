@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://dwpba5ca16cs1" path="res://PlayerBoard.tscn" id="2_r0du0"]
 [ext_resource type="Script" uid="uid://dcxy0vxwon3oa" path="res://game_manager.gd" id="3_r0du0"]
 [ext_resource type="Script" uid="uid://cvyqjgg8o400" path="res://event_manager.gd" id="4_cm0pq"]
+[ext_resource type="Script" uid="uid://brhei7rvagr83" path="res://MatchHistoryManager.gd" id="5_fos0i"]
 
 [node name="Node2D" type="Node2D" unique_id=2127168724]
 
@@ -19,3 +20,6 @@ script = ExtResource("3_r0du0")
 
 [node name="EventManager" type="Node" parent="." unique_id=1159943984]
 script = ExtResource("4_cm0pq")
+
+[node name="MatchHistoryManager" type="Node" parent="." unique_id=1136478388]
+script = ExtResource("5_fos0i")
