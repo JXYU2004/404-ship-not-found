@@ -9,6 +9,8 @@ var opponent_id := -1
 
 var searching_match := false
 
+var quick_match_retry := false
+
 func _ready() -> void:
 	
 	print(get_path())
@@ -73,8 +75,17 @@ func on_lobby_match_list(lobbies: Array) -> void:
 			Steam.joinLobby(lobby)
 			return
 	
-	print("No available lobbies")
-	host_lobby(Steam.LOBBY_TYPE_PUBLIC)
+	if !quick_match_retry:
+		quick_match_retry = true
+		
+		await get_tree().create_timer(randf_range(0.5, 2.0)).timeout
+		
+		quick_match()
+		
+	else:
+		quick_match_retry = false
+		print("No available lobbies")
+		host_lobby(Steam.LOBBY_TYPE_PUBLIC)
 
 func open_invite_overlay() -> void:
 	if lobby_id != 0:
@@ -112,3 +123,18 @@ func on_peer_connected(id: int) -> void:
 func on_peer_disconnected() -> void:
 	print("Opponent disconnected.")
 	get_tree().change_scene_to_file("res://menu.tscn")
+
+func is_host() -> bool:
+	return Steam.getSteamID() == Steam.getLobbyOwner(lobby_id)
+
+func reset_match() -> void:
+	searching_match = false
+	opponent_id = -1
+
+	if multiplayer.multiplayer_peer != null:
+		multiplayer.multiplayer_peer.close()
+		multiplayer.multiplayer_peer = null
+
+	if lobby_id != 0:
+		Steam.leaveLobby(lobby_id)
+		lobby_id = 0

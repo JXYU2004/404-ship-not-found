@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://bv5ibi0fv84qh"]
+
+[ext_resource type="Script" uid="uid://dcs2gl7agfd57" path="res://undo_button.gd" id="1_gaoaf"]
+
+[node name="UNDO BUTTON" type="Button" unique_id=648677106]
+offset_left = 435.0
+offset_top = 198.0
+offset_right = 680.0
+offset_bottom = 319.0
+text = "UNDO"
+script = ExtResource("1_gaoaf")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

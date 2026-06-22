@@ -19,6 +19,8 @@ var attack_mode := "normal"
 
 @onready var history = $"../MatchHistoryManager"
 
+@onready var undo = $"../UNDO BUTTON"
+
 var currEnergy = 4:
 	set(value):
 		currEnergy = clamp(value, 0, maxEnergy)
@@ -55,8 +57,7 @@ func next_turn() -> void:
 		player_board.update_radar()
 		
 		await get_tree().create_timer(0.1).timeout
-		
-		player_board.update_health()
+	
 		
 		
 		currTurn += 1
@@ -70,16 +71,26 @@ func next_turn() -> void:
 		energy_surge_used = false
 		print("currTurn: ", currTurn)
 		
-		if currTurn > 1 and currTurn % 4 == 0:
-			rpc_id(NetworkManager.opponent_id, "trigger_random_event")
+		if NetworkManager.is_host():
+			if currTurn > 1 and currTurn % 4 == 0:
+				trigger_random_event()
+				rpc_id(NetworkManager.opponent_id, "trigger_random_event")
+			
+			if currTurn > 1 and currTurn % 2 == 1:
+				var side = randi_range(0, 3)
+				
+				map_shrink_all(side)
+				
+				rpc_id(NetworkManager.opponent_id, "map_shrink_all", side)
+				
+		player_board.check_shrink_zone_damage()
 		
-		if currTurn > 1 and currTurn % 2 == 1:
-			var side = randi_range(0, 3)
-				
-			rpc_id(NetworkManager.opponent_id, "map_shrink_all", side)
-				
+		await get_tree().create_timer(0.1).timeout
+		
+		player_board.update_health()
 		
 		currEnergy = maxEnergy
+		undo.clear_actions()
 		myTurnEnd = false
 		opponentTurnEnd = false
 
@@ -105,12 +116,12 @@ func consume_energy(amount):
 	return false
 		
 
-@rpc("any_peer", "call_local")
+@rpc("any_peer", "call_remote")
 func map_shrink_all(side: int) -> void:
 	player_board._decrease_map_size(side)
 	enemy_board._decrease_map_size(side)
 
-@rpc("any_peer", "call_local")
+@rpc("any_peer", "call_remote")
 func trigger_random_event():
 	EventManager.trigger_random_event()
 
@@ -123,5 +134,6 @@ func declare_winner(loser: int) -> void:
 		EndScene.host_won = false
 	else:
 		EndScene.host_won = true
-		
+	
+	NetworkManager.reset_match()
 	get_tree().change_scene_to_file("res://end_scene.tscn")

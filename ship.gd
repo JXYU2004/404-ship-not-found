@@ -32,7 +32,7 @@ func set_ship_pos(input: Array[Vector2i]) -> void:
 		positions.append(pos)
 	
 func get_ship_pos() -> Array[Vector2i]:
-	return positions
+	return positions.duplicate()
 
 func move(dir: int) -> void:
 	var add

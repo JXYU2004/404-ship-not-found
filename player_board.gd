@@ -15,6 +15,8 @@ static var curr_layout = null
 @onready var cruiser_life = $"cruiser life"
 @onready var radar = $radar
 
+@onready var undo = $"../UNDO BUTTON"
+
 var active_ship = null
 var moving = false
 
@@ -47,7 +49,6 @@ func _ready() -> void:
 
 
 func prepare_ship(ship: Node2D) -> void:
-	
 	
 	
 	var ship_button = ship.get_node_or_null("Ship Button")
@@ -107,29 +108,129 @@ func _check_ship_in_board(dir: int) -> bool:
 
 func _on_move_left_pressed() -> void:
 	if moving and _check_ship_in_board(0):
+		
+		if active_ship == null or active_ship.sinked:
+			return
+			
+		var ship = active_ship
+		var old_pos = ship.get_ship_pos().duplicate()
+		var old_global_pos = ship.global_position
+		var old_energy = GameManager.currEnergy
+		
+		var data = {
+			"type": "movement",
+			
+			"ship": ship,
+			
+			"old_pos": old_pos,
+			
+			"old_global_pos": old_global_pos,
+			
+			"old_energy": old_energy
+			}
+			
+		
+		undo.store_action(data)
+		
 		active_ship.global_position.x -= 26
 		active_ship.move(0)
 		GameManager.consume_energy(1)
 
 func _on_move_up_pressed() -> void:
 	if moving and _check_ship_in_board(1):
+		
+		if active_ship == null or active_ship.sinked:
+			return
+			
+		var ship = active_ship
+		var old_pos = ship.get_ship_pos().duplicate()
+		var old_global_pos = ship.global_position
+		var old_energy = GameManager.currEnergy
+		
+		var data = {
+			"type": "movement",
+			
+			"ship": ship,
+			
+			"old_pos": old_pos,
+			
+			"old_global_pos": old_global_pos,
+			
+			"old_energy": old_energy
+			}
+			
+		
+		undo.store_action(data)
 		active_ship.global_position.y -= 26
 		active_ship.move(1)
 		GameManager.consume_energy(1)
 
 func _on_move_right_pressed() -> void:
+	
 	if moving and _check_ship_in_board(2):
+		
+		if active_ship == null or active_ship.sinked:
+			return
+			
+		var ship = active_ship
+		var old_pos = ship.get_ship_pos().duplicate()
+		var old_global_pos = ship.global_position
+		var old_energy = GameManager.currEnergy
+		
+		var data = {
+			"type": "movement",
+			
+			"ship": ship,
+			
+			"old_pos": old_pos,
+			
+			"old_global_pos": old_global_pos,
+			
+			"old_energy": old_energy
+			}
+			
+		
+		undo.store_action(data)
 		active_ship.global_position.x += 26
 		active_ship.move(2)
 		GameManager.consume_energy(1)
 
 func _on_move_down_pressed() -> void:
 	if moving and _check_ship_in_board(3):
+		
+		if active_ship == null or active_ship.sinked:
+			return
+			
+		
+		var ship = active_ship
+		var old_pos = ship.get_ship_pos().duplicate()
+		var old_global_pos = ship.global_position
+		var old_energy = GameManager.currEnergy
+		
+		var data = {
+			"type": "movement",
+			
+			"ship": ship,
+			
+			"old_pos": old_pos,
+			
+			"old_global_pos": old_global_pos,
+			
+			"old_energy": old_energy
+			}
+			
+		
+		undo.store_action(data)
 		active_ship.global_position.y += 26
 		active_ship.move(3)
 		GameManager.consume_energy(1)
 
 func _on_ship_button_pressed(ship: Node2D) -> void:
+	
+	if ship.sinked:
+		print("ship sunked")
+		return
+	
 	active_ship = ship
 	moving = true
 
@@ -186,6 +287,14 @@ func update_health() -> void:
 	submarine_life.update_health(submarine.hit_point)
 	cruiser_life.update_health(cruiser.hit_point)
 	destroyer_life.update_health(destroyer.hit_point)
+	
+	var hitpoints = {
+		"submarine": submarine.hit_point,
+		"cruiser": cruiser.hit_point,
+		"destroyer": destroyer.hit_point
+	}
+	
+	enemy_board.rpc_id(NetworkManager.opponent_id,  "update_enemy_health", hitpoints)
 
 
 func _on_radar_button_pressed() -> void:
@@ -197,6 +306,15 @@ func _on_radar_button_pressed() -> void:
 			"Turn %d: Cruiser Scout activated"
 			% GameManager.currTurn
 		)
+		
+		var data = {
+			"type": "radar",
+			
+			"old_energy": GameManager.currEnergy + 2
+		}
+		
+		undo.store_action(data)
+		
 		clear_all_scans()
 		scanned = true
 		get_cruiser_scan_coord()
@@ -259,3 +377,30 @@ func update_radar() -> void:
 			var detected_cell = Vector2i(offset.x + 1, offset.y + 1)
 			radar.detected(detected_cell)
 	
+func ship_outside_zone(ship) -> bool:
+	for cell in ship.get_ship_pos():
+		if ! _inside_board(cell):
+			return true
+	
+	return false
+
+func check_shrink_zone_damage() -> void:
+	
+	var ships = [
+		submarine,
+		destroyer,
+		cruiser
+	]
+	
+	for ship in ships:
+		
+		if ship.sinked:
+			continue
+		
+		if ship_outside_zone(ship):
+			print("ship lost health!!")
+			ship._on_hit()
+			
+			history.add_entry(
+				"%s took storm damage" % ship.ship_name
+			)

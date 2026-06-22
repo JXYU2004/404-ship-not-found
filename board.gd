@@ -33,17 +33,17 @@ func _decrease_map_size(side: int) -> void:
 		return
 	if side == 0:
 		for i in range(min_x, max_x + 1):
-			tilemap.set_cell(Vector2i(i, min_y), 0, Vector2i(1, 1))
+			tilemap.set_cell(Vector2i(i, min_y), 1, Vector2i(1, 1))
 		min_y += 1
 	elif side == 1:
 		for i in range(min_x, max_x + 1):
-			tilemap.set_cell(Vector2i(i, max_y), 0, Vector2i(1, 1))
+			tilemap.set_cell(Vector2i(i, max_y), 1, Vector2i(1, 1))
 		max_y -= 1
 	elif side == 2:
 		for i in range(min_y, max_y + 1):
-			tilemap.set_cell(Vector2i(min_x, i), 0, Vector2i(1, 1))
+			tilemap.set_cell(Vector2i(min_x, i), 1, Vector2i(1, 1))
 		min_x += 1
 	else:
 		for i in range(min_y, max_y + 1):
-			tilemap.set_cell(Vector2i(max_x, i), 0, Vector2i(1, 1))
+			tilemap.set_cell(Vector2i(max_x, i), 1, Vector2i(1, 1))
 		max_x -= 1

@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://4j2c2mbgdk4a" path="res://enemy_board.gd" id="2_5bxdw"]
 [ext_resource type="Texture2D" uid="uid://ccx6300las3ll" path="res://SpriteFolder/Your_board-removebg.png" id="2_a2vqc"]
 [ext_resource type="Texture2D" uid="uid://ci5rrogbvfrwb" path="res://testing 3.jpg" id="3_886wt"]
+[ext_resource type="Texture2D" uid="uid://dnc3llq2x38rw" path="res://Shrinking map.jpg" id="4_6j7is"]
 [ext_resource type="Texture2D" uid="uid://bxc1idvle5603" path="res://testing yes.jpg" id="4_deddn"]
 [ext_resource type="PackedScene" uid="uid://dqd05mstqxyx4" path="res://EnergyBar.tscn" id="4_ut2ui"]
 [ext_resource type="Texture2D" uid="uid://bjnl1swtkr8gh" path="res://SpriteFolder/bomb-removebg.png" id="9_deddn"]
@@ -14,9 +15,23 @@
 [ext_resource type="PackedScene" uid="uid://d0lryi26yd36c" path="res://ship.tscn" id="14_p27j1"]
 [ext_resource type="Script" uid="uid://csq8501jacbm1" path="res://destroyer.gd" id="15_p27j1"]
 [ext_resource type="PackedScene" uid="uid://c7vmqka4aaflo" path="res://submarine.tscn" id="15_v6xmo"]
+[ext_resource type="FontFile" uid="uid://be0c25qbc217d" path="res://font404 2.ttf" id="16_5o133"]
+[ext_resource type="PackedScene" uid="uid://d3b6wecgct5ei" path="res://ship_lives.tscn" id="17_evge1"]
+[ext_resource type="Texture2D" uid="uid://xdruaufjpmdu" path="res://SpriteFolder/Destroyer_pixel side.png" id="18_pymo8"]
+[ext_resource type="Texture2D" uid="uid://moegd7c6kcls" path="res://SpriteFolder/Submarine pixel side.png" id="19_q5au8"]
+[ext_resource type="Texture2D" uid="uid://b6anesxbsmpbe" path="res://SpriteFolder/cruiser side pixel.png" id="20_7c8g6"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_uc4dn"]
 texture = ExtResource("3_886wt")
+separation = Vector2i(2, 5)
+texture_region_size = Vector2i(26, 26)
+0:0/0 = 0
+1:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_p27j1"]
+texture = ExtResource("4_6j7is")
 separation = Vector2i(2, 5)
 texture_region_size = Vector2i(26, 26)
 0:0/0 = 0
@@ -38,6 +53,7 @@ use_texture_padding = false
 tile_size = Vector2i(26, 26)
 sources/0 = SubResource("TileSetAtlasSource_uc4dn")
 sources/4 = SubResource("TileSetAtlasSource_tjhni")
+sources/1 = SubResource("TileSetAtlasSource_p27j1")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5bxdw"]
 atlas = ExtResource("2_a2vqc")
@@ -151,6 +167,51 @@ script = ExtResource("15_p27j1")
 [node name="Submarine" parent="." index="14" unique_id=1138278958 instance=ExtResource("15_v6xmo")]
 position = Vector2(619, 39.999985)
 scale = Vector2(0.138, 0.118)
+
+[node name="Lives" type="Label" parent="." index="15" unique_id=1485404156]
+offset_left = -112.0
+offset_top = 169.0
+offset_right = -52.0
+offset_bottom = 192.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("16_5o133")
+text = "LIVES"
+
+[node name="DestroyerPixelSide" type="Sprite2D" parent="." index="16" unique_id=754922349]
+position = Vector2(-81.99999, 220)
+scale = Vector2(0.10015649, 0.17600004)
+texture = ExtResource("18_pymo8")
+
+[node name="SubmarinePixelSide" type="Sprite2D" parent="." index="17" unique_id=1880833831]
+position = Vector2(-83, 287)
+scale = Vector2(0.06248744, 0.12900001)
+texture = ExtResource("19_q5au8")
+
+[node name="CruiserSidePixel" type="Sprite2D" parent="." index="18" unique_id=1912941360]
+position = Vector2(-106, 346.06253)
+scale = Vector2(0.09407371, 0.10825002)
+texture = ExtResource("20_7c8g6")
+
+[node name="Destroyer life" parent="." index="19" unique_id=1545419387 instance=ExtResource("17_evge1")]
+offset_left = -118.0
+offset_top = 242.0
+offset_right = 610.0
+offset_bottom = 482.0
+scale = Vector2(0.09437167, 0.09417931)
+
+[node name="Submarine life" parent="." index="20" unique_id=280158077 instance=ExtResource("17_evge1")]
+offset_left = -117.00002
+offset_top = 306.99997
+offset_right = 611.0
+offset_bottom = 547.0
+scale = Vector2(0.094, 0.094)
+
+[node name="cruiser life" parent="." index="21" unique_id=1321801082 instance=ExtResource("17_evge1")]
+offset_left = -117.999985
+offset_top = 368.0
+offset_right = 610.0
+offset_bottom = 608.0
+scale = Vector2(0.094, 0.094)
 
 [connection signal="pressed" from="YourBoard" to="." method="_on_texture_button_pressed"]
 [connection signal="pressed" from="Attack button" to="." method="_on_attack_button_pressed"]

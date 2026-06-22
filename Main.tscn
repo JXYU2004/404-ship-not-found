@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://dcxy0vxwon3oa" path="res://game_manager.gd" id="3_r0du0"]
 [ext_resource type="Script" uid="uid://cvyqjgg8o400" path="res://event_manager.gd" id="4_cm0pq"]
 [ext_resource type="Script" uid="uid://brhei7rvagr83" path="res://MatchHistoryManager.gd" id="5_fos0i"]
+[ext_resource type="PackedScene" uid="uid://bv5ibi0fv84qh" path="res://undo_button.tscn" id="6_3dxm6"]
 
 [node name="Node2D" type="Node2D" unique_id=2127168724]
 
@@ -23,3 +24,10 @@ script = ExtResource("4_cm0pq")
 
 [node name="MatchHistoryManager" type="Node" parent="." unique_id=1136478388]
 script = ExtResource("5_fos0i")
+
+[node name="UNDO BUTTON" parent="." unique_id=648677106 instance=ExtResource("6_3dxm6")]
+offset_left = 529.0
+offset_top = 260.0
+offset_right = 586.0
+offset_bottom = 295.0
+scale = Vector2(0.5574401, 0.9118462)

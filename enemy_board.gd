@@ -14,6 +14,8 @@ var current_preview_coords : Array[Vector2i] = []
 
 var hit_count := 0
 
+@onready var undo = $"../UNDO BUTTON"
+
 @onready var cover = $Cover
 @onready var history = $"../MatchHistoryManager"
 
@@ -22,6 +24,10 @@ var hit_count := 0
 @onready var cruiser: Node2D = $Cruiser
 
 @export var player_board: Node
+
+@onready var submarine_life = $"Submarine life"
+@onready var destroyer_life = $"Destroyer life"
+@onready var cruiser_life = $"cruiser life"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -43,6 +49,9 @@ func _ready() -> void:
 	prepare_ship(submarine)
 	prepare_ship(cruiser)
 	prepare_ship(destroyer)
+	submarine_life.set_up(submarine.hit_point)
+	destroyer_life.set_up(destroyer.hit_point)
+	cruiser_life.set_up(cruiser.hit_point)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -154,11 +163,27 @@ func attack_at_pos(pos: Vector2i) -> void:
 			"Turn %d: Normal Attack used"
 			% GameManager.currTurn
 		)
+		
+		var positions = []
+		
+		
 		cover.set_cell(pos, 0, Vector2i(0,1))
 		attacking = false
 		
 		if not attack_coord.has(pos):
 			attack_coord.append(pos)
+			positions.append(pos)
+		
+		var data = {
+			"type": "attack",
+			
+			"positions": positions,
+			
+			"old_energy": GameManager.currEnergy + 1
+				
+		}
+		
+		undo.store_action(data)
 
 func special_attack_at_pos(pos: Vector2i) -> void:
 	var inside_board = _inside_board(pos)
@@ -168,11 +193,26 @@ func special_attack_at_pos(pos: Vector2i) -> void:
 			% GameManager.currTurn
 		)
 		var tiles = area_covered(pos)
+		
+		var positions = []
+		
 		for cell in tiles:
 			if _inside_board(cell):
 				cover.set_cell(cell, 0, Vector2i(0,1))
 				if not attack_coord.has(cell):
 					attack_coord.append(cell)
+					positions.append(cell)
+					
+		var data = {
+			"type": "attack",
+			
+			"positions": positions,
+			
+			"old_energy": GameManager.currEnergy + 2
+				
+		}
+		
+		undo.store_action(data)
 		attacking = false
 
 func special_attack_at_pos_horiorvet(pos: Vector2i) -> void:
@@ -194,11 +234,26 @@ func special_attack_at_pos_horiorvet(pos: Vector2i) -> void:
 		var tiles = area_covered_vertical(pos)
 		if (attack_mode == "special horizontal"):
 			tiles = area_covered_horizontal(pos)
+		
+		var positions = []
+		
 		for cell in tiles:
 			if _inside_board(cell):
 				cover.set_cell(cell, 0, Vector2i(0,1))
 				if not attack_coord.has(cell):
 					attack_coord.append(cell)
+					positions.append(cell)
+					
+		var data = {
+			"type": "attack",
+			
+			"positions": positions,
+			
+			"old_energy": GameManager.currEnergy + 2
+				
+		}
+		
+		undo.store_action(data)
 		attacking = false
 
 func _input(event: InputEvent) -> void:
@@ -324,3 +379,15 @@ func check_hit_miss() -> void:
 	attack_coord.clear() ## clear attack coordinates
 	
 	player_board.rpc("check_lose") ## check win/lose
+
+func reset_cover(pos: Vector2i) -> void:
+	cover.set_cell(pos, 0, Vector2i(1, 0))
+
+func remove_attack(pos: Vector2i) -> void:
+	attack_coord.erase(pos)
+
+@rpc("any_peer", "call_remote")
+func update_enemy_health(data: Dictionary):
+	submarine_life.update_health(data["submarine"])
+	cruiser_life.update_health(data["cruiser"])
+	destroyer_life.update_health(data["destroyer"])

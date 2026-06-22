@@ -9,6 +9,8 @@ const BOARD_OFFSET = Vector2i(-3, -3)
 
 @onready var ship_manager = $"../ShipManager"
 
+@onready var undo = $"../UNDO BUTTON"
+
 var ownself_ready = false
 
 var opponent_ready = false
@@ -113,6 +115,15 @@ func confirm_placement() -> void:
 		current_ship,
 		current_ship.positions
 	):
+		
+		undo.store_action(
+			{
+				"type": "placement",
+				
+				"ship": current_ship
+			}
+		)
+		
 
 		current_ship.is_placed = true
 
@@ -242,6 +253,7 @@ func _check_ready() -> bool:
 func _on_ready_button_pressed() -> void:
 	if _check_ready():
 		ownself_ready = true
+		undo.disabled = true
 		var curr_layout = {
 			"Cruiser": {
 				"positions": ships["cruiser"].positions,
@@ -276,6 +288,7 @@ func send_layout_to_enemy(opponent_layout: Dictionary) -> void:
 func proceed_to_main() -> void:
 	if ownself_ready and opponent_ready:
 		print("Transitioning into the game arena...")
+		undo.clear_actions()
 		get_tree().call_deferred("change_scene_to_file", "res://Main.tscn")
 		
 

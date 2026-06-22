@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://c3bitqd1y8r7r" path="res://SpriteFolder/submarine top.png" id="7_2rhth"]
 [ext_resource type="Texture2D" uid="uid://b5cqsi8aqwgym" path="res://SpriteFolder/ship 3x1 pixel.png" id="8_6ml7d"]
 [ext_resource type="PackedScene" uid="uid://d3wfhws8mnua0" path="res://ship(test).tscn" id="9_elxm0"]
+[ext_resource type="PackedScene" uid="uid://bv5ibi0fv84qh" path="res://undo_button.tscn" id="10_746qv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kj3p2"]
 texture = ExtResource("2_746qv")
@@ -112,6 +113,13 @@ offset_right = 958.00006
 offset_bottom = 238.0
 scale = Vector2(1.576439, 2.7257156)
 text = "READY"
+
+[node name="UNDO BUTTON" parent="." unique_id=648677106 instance=ExtResource("10_746qv")]
+offset_left = 915.00006
+offset_top = 320.0
+offset_right = 1160.0
+offset_bottom = 441.0
+scale = Vector2(0.26511353, 0.41083002)
 
 [connection signal="pressed" from="UI/CruiserInitialise" to="PlacementLayer" method="_on_cruiser_initialise_pressed"]
 [connection signal="pressed" from="UI/SubmarineInitialise" to="PlacementLayer" method="_on_submarine_initialise_pressed"]
