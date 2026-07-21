@@ -1,4 +1,4 @@
-extends Button
+extends TextureButton
 
 var actions_stack := []
 
@@ -28,7 +28,7 @@ func _on_pressed() -> void:
 			
 			ship.set_ship_pos(action["old_pos"])
 			
-			ship.global_position = action["old_global_pos"]
+			player_board.animate_ship_to(ship, action["old_global_pos"])
 			
 			game_manager.currEnergy = action["old_energy"]
 			
@@ -44,9 +44,10 @@ func _on_pressed() -> void:
 		"attack":
 			
 			var cells = action["positions"]
-			
+			var attacked_before_list = action["attacked_before_list"]
 			for cell in cells:
-				enemy_board.reset_cover(cell)
+				enemy_board.reset_cover(cell, attacked_before_list[cell])
+
 				enemy_board.remove_attack(cell)
 			
 			game_manager.currEnergy = action["old_energy"]

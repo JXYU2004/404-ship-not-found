@@ -156,16 +156,16 @@ scale = Vector2(0.38227043, 0.29629743)
 texture_normal = SubResource("AtlasTexture_tc16g")
 
 [node name="Cruiser" parent="." index="12" unique_id=1826027572 instance=ExtResource("13_6j7is")]
-position = Vector2(738, 38.99997)
+position = Vector2(1023.00006, 121.00001)
 scale = Vector2(0.098, 0.073)
 
 [node name="Destroyer" parent="." index="13" unique_id=1691974735 instance=ExtResource("14_p27j1")]
-position = Vector2(673, 32)
+position = Vector2(965, 106)
 scale = Vector2(0.163, 0.158)
 script = ExtResource("15_p27j1")
 
 [node name="Submarine" parent="." index="14" unique_id=1138278958 instance=ExtResource("15_v6xmo")]
-position = Vector2(619, 39.999985)
+position = Vector2(915, 106)
 scale = Vector2(0.138, 0.118)
 
 [node name="Lives" type="Label" parent="." index="15" unique_id=1485404156]

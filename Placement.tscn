@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://c3bitqd1y8r7r" path="res://SpriteFolder/submarine top.png" id="7_2rhth"]
 [ext_resource type="Texture2D" uid="uid://b5cqsi8aqwgym" path="res://SpriteFolder/ship 3x1 pixel.png" id="8_6ml7d"]
 [ext_resource type="PackedScene" uid="uid://d3wfhws8mnua0" path="res://ship(test).tscn" id="9_elxm0"]
+[ext_resource type="FontFile" uid="uid://be0c25qbc217d" path="res://font404 2.ttf" id="10_4p1xe"]
 [ext_resource type="PackedScene" uid="uid://bv5ibi0fv84qh" path="res://undo_button.tscn" id="10_746qv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kj3p2"]
@@ -111,15 +112,21 @@ offset_left = 899.00006
 offset_top = 207.0
 offset_right = 958.00006
 offset_bottom = 238.0
-scale = Vector2(1.576439, 2.7257156)
+scale = Vector2(1.1132374, 2.2891018)
+theme_override_fonts/font = ExtResource("10_4p1xe")
+theme_override_font_sizes/font_size = 21
 text = "READY"
 
 [node name="UNDO BUTTON" parent="." unique_id=648677106 instance=ExtResource("10_746qv")]
-offset_left = 915.00006
-offset_top = 320.0
-offset_right = 1160.0
-offset_bottom = 441.0
-scale = Vector2(0.26511353, 0.41083002)
+offset_left = 921.99994
+offset_top = 311.00003
+offset_right = 1166.9999
+offset_bottom = 533.0
+scale = Vector2(0.22230047, 0.21747318)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=363040153]
+position = Vector2(722, 345)
+zoom = Vector2(1.1, 1.2)
 
 [connection signal="pressed" from="UI/CruiserInitialise" to="PlacementLayer" method="_on_cruiser_initialise_pressed"]
 [connection signal="pressed" from="UI/SubmarineInitialise" to="PlacementLayer" method="_on_submarine_initialise_pressed"]

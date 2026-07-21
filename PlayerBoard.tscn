@@ -95,15 +95,15 @@ offset_bottom = 8.0
 text = "TURN 1"
 
 [node name="Destroyer" parent="." index="7" unique_id=1826027572 instance=ExtResource("8_6tar4")]
-position = Vector2(716.0001, 19)
+position = Vector2(1026, 77)
 scale = Vector2(0.16291389, 0.1584475)
 
 [node name="Cruiser" parent="." index="8" unique_id=1993719955 instance=ExtResource("10_2haap")]
-position = Vector2(665, 28)
+position = Vector2(1072, 106)
 scale = Vector2(0.098084964, 0.07327699)
 
 [node name="Submarine" parent="." index="9" unique_id=1259055036 instance=ExtResource("11_1lo1b")]
-position = Vector2(619.99994, 18.000008)
+position = Vector2(987, 81.99999)
 scale = Vector2(0.13772489, 0.118017256)
 
 [node name="Move Up" type="TextureButton" parent="." index="10" unique_id=114348124]

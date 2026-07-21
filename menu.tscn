@@ -1,34 +1,52 @@
 [gd_scene format=3 uid="uid://cvkvtb25je5tc"]
 
 [ext_resource type="Script" uid="uid://ciwnku5yod0xu" path="res://menu.gd" id="1_lti8b"]
+[ext_resource type="FontFile" uid="uid://be0c25qbc217d" path="res://font404 2.ttf" id="2_mae5d"]
+[ext_resource type="Texture2D" uid="uid://oy7trlyibhpn" path="res://SpriteFolder/MENU_ICON-removebg-preview.png" id="2_ouk20"]
 
 [node name="Menu" type="Node2D" unique_id=1088636306]
 script = ExtResource("1_lti8b")
 
 [node name="Host Button" type="Button" parent="." unique_id=1079464294]
-offset_left = 444.0
-offset_top = 282.0
-offset_right = 488.0
-offset_bottom = 313.0
-scale = Vector2(6.3154993, 2.9352453)
-text = "Host"
+texture_filter = 1
+offset_left = 448.0
+offset_top = 441.0
+offset_right = 570.0
+offset_bottom = 466.0
+scale = Vector2(2.1783876, 1.8648485)
+theme_override_fonts/font = ExtResource("2_mae5d")
+theme_override_font_sizes/font_size = 16
+text = "HOST MATCH"
 
 [node name="Join Button" type="Button" parent="." unique_id=1573353921]
 visible = false
-offset_left = 462.0
-offset_top = 442.0
-offset_right = 500.0
-offset_bottom = 473.0
-scale = Vector2(6.321943, 3.4072526)
-text = "Invite"
+offset_left = 444.00003
+offset_top = 524.0
+offset_right = 524.0
+offset_bottom = 547.0
+scale = Vector2(3.4097483, 2.4740803)
+theme_override_fonts/font = ExtResource("2_mae5d")
+theme_override_font_sizes/font_size = 16
+text = "INVITE"
 
 [node name="Quick Match" type="Button" parent="." unique_id=213965563]
-offset_left = 451.0
-offset_top = 136.0
-offset_right = 615.0
-offset_bottom = 213.0
+offset_left = 446.0
+offset_top = 344.99997
+offset_right = 607.9027
+offset_bottom = 394.875
 scale = Vector2(1.661491, 1.1428572)
-text = "Quick Match"
+theme_override_fonts/font = ExtResource("2_mae5d")
+text = "QUICK MATCH"
+
+[node name="MenuIconRemovebgPreview" type="Sprite2D" parent="." unique_id=1656942719]
+position = Vector2(583, 169.99997)
+scale = Vector2(1.8701392, 1.9278213)
+texture = ExtResource("2_ouk20")
+region_enabled = true
+region_rect = Rect2(216, 121, 238, 179)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=317417376]
+position = Vector2(581, 325)
 
 [connection signal="pressed" from="Host Button" to="." method="_on_host_button_pressed"]
 [connection signal="pressed" from="Join Button" to="." method="_on_join_button_pressed"]

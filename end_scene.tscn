@@ -7,8 +7,19 @@
 script = ExtResource("1_jvrxn")
 
 [node name="Label" type="Label" parent="." unique_id=1180899494]
-offset_left = 380.0
-offset_top = 184.0
-offset_right = 814.0
-offset_bottom = 428.0
+offset_left = 498.0
+offset_top = 218.0
+offset_right = 687.0
+offset_bottom = 258.0
 theme_override_fonts/font = ExtResource("2_vitp6")
+theme_override_font_sizes/font_size = 36
+text = "TESTING"
+
+[node name="Button" type="Button" parent="." unique_id=496331071]
+offset_left = 466.0
+offset_top = 400.0
+offset_right = 723.0
+offset_bottom = 465.0
+text = "MENU"
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

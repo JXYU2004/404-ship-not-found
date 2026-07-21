@@ -8,14 +8,18 @@ extends Node2D
 func _ready() -> void:
 	NetworkManager.lobby_created_success.connect(_on_lobby_created)
 	NetworkManager.match_ready.connect(_on_match_ready)
+	NetworkManager.host_failed.connect(_on_host_failed)
+	NetworkManager.join_failed.connect(_on_join_failed)
 
 func _on_match_ready() -> void:
 	print("Moving to PLacement scene")
-	get_tree().change_scene_to_file("res://Placement.tscn")
+	NetworkManager.set_curr_scene("res://Placement.tscn")
+	get_tree().call_deferred("change_scene_to_file", "res://Placement.tscn")
 
 func _on_lobby_created() -> void:
 	host_button.hide()
-	invite_button.show()
+	if NetworkManager.current_lobby_type == Steam.LOBBY_TYPE_FRIENDS_ONLY:
+		invite_button.show()
 
 func _on_host_button_pressed() -> void:
 	host_button.disabled = true
@@ -27,6 +31,16 @@ func _on_join_button_pressed() -> void:
 
 func _on_quick_match_pressed() -> void:
 	host_button.disabled = true
-	quick_match_button.text = "Searching..."
+	quick_match_button.text = "SEARCHING..."
 	quick_match_button.disabled = true
 	NetworkManager.quick_match()
+
+func _on_host_failed() -> void:
+	host_button.disabled = false
+	quick_match_button.text = "Quick Match"
+	quick_match_button.disabled = false
+
+func _on_join_failed() -> void:
+	quick_match_button.text = "Quick Match"
+	quick_match_button.disabled = false
+	host_button.disabled = false

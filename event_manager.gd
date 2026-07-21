@@ -3,7 +3,7 @@ extends Node
 
 @onready var player_board = $"../PlayerBoard"
 
-@onready var history = $"../MatchHistoryManager"
+@onready var history = MatchHistoryManager
 
 func trigger_random_current():
 

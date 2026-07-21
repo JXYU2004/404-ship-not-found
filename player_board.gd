@@ -4,7 +4,7 @@ class_name PlayerBoard
 static var curr_layout = null
 
 @export var enemy_board: Node
-@onready var history = $"../MatchHistoryManager"
+@onready var history = MatchHistoryManager
 
 @onready var submarine: Node2D = $Submarine
 @onready var destroyer: Node2D = $Destroyer
@@ -16,6 +16,11 @@ static var curr_layout = null
 @onready var radar = $radar
 
 @onready var undo = $"../UNDO BUTTON"
+@onready var radar_button = $"radar button"
+@onready var move_up = $"Move Up"
+@onready var move_down = $"Move Down"
+@onready var move_right = $"Move Right"
+@onready var move_left = $"Move Left"
 
 var active_ship = null
 var moving = false
@@ -39,12 +44,12 @@ func _ready() -> void:
 	
 		$Destroyer.set_ship_pos(curr_layout["Destroyer"]["positions"])
 		$Destroyer.set_is_vertical(curr_layout["Destroyer"]["is_vertical"])
-	prepare_ship(submarine)
-	prepare_ship(cruiser)
-	prepare_ship(destroyer)
-	submarine_life.set_up(submarine.hit_point)
-	destroyer_life.set_up(destroyer.hit_point)
-	cruiser_life.set_up(cruiser.hit_point)
+		prepare_ship(submarine)
+		prepare_ship(cruiser)
+		prepare_ship(destroyer)
+		submarine_life.set_up(submarine.hit_point)
+		destroyer_life.set_up(destroyer.hit_point)
+		cruiser_life.set_up(cruiser.hit_point)
 	
 
 
@@ -132,9 +137,11 @@ func _on_move_left_pressed() -> void:
 		
 		undo.store_action(data)
 		
-		active_ship.global_position.x -= 26
+		animate_ship_to(active_ship, active_ship.global_position + Vector2(-26, 0))
 		active_ship.move(0)
+		history.total_movements += 1
 		GameManager.consume_energy(1)
+		moving = false
 
 func _on_move_up_pressed() -> void:
 	if moving and _check_ship_in_board(1):
@@ -161,9 +168,11 @@ func _on_move_up_pressed() -> void:
 			
 		
 		undo.store_action(data)
-		active_ship.global_position.y -= 26
+		animate_ship_to(active_ship, active_ship.global_position + Vector2(0, -26))
 		active_ship.move(1)
+		history.total_movements += 1
 		GameManager.consume_energy(1)
+		moving = false
 
 func _on_move_right_pressed() -> void:
 	
@@ -191,9 +200,11 @@ func _on_move_right_pressed() -> void:
 			
 		
 		undo.store_action(data)
-		active_ship.global_position.x += 26
+		animate_ship_to(active_ship, active_ship.global_position + Vector2(26, 0))
 		active_ship.move(2)
+		history.total_movements += 1
 		GameManager.consume_energy(1)
+		moving = false
 
 func _on_move_down_pressed() -> void:
 	if moving and _check_ship_in_board(3):
@@ -221,9 +232,11 @@ func _on_move_down_pressed() -> void:
 			
 		
 		undo.store_action(data)
-		active_ship.global_position.y += 26
+		animate_ship_to(active_ship, active_ship.global_position + Vector2(0, 26))
 		active_ship.move(3)
+		history.total_movements += 1
 		GameManager.consume_energy(1)
+		moving = false
 
 func _on_ship_button_pressed(ship: Node2D) -> void:
 	
@@ -243,14 +256,19 @@ func declare_final_pos() -> void:
 	enemy_board.rpc_id(NetworkManager.opponent_id, "receive_final_pos", final_position)
 
 @rpc("any_peer", "call_remote")
-func receive_attack(ship_name: String) -> void:
+func receive_attack(ship_name: String, cell: Vector2i) -> void:
 	history.add_entry(
 		"Turn %d: Enemy hit %s"
 		% [GameManager.currTurn, ship_name]
 	)
 	
+	tilemap.set_cell(cell, 0, Vector2i(1, 0)) 
+	
 	if ship_name == "destroyer":
 		destroyer._on_hit()
+		
+		if destroyer.sinked:
+			enemy_board.disable_special_attacks()
 		print("destroyer remaining health: ", destroyer.hit_point)
 	elif ship_name == "submarine":
 		submarine._on_hit()
@@ -267,13 +285,13 @@ func receive_miss(cell: Vector2i) -> void:
 	)
 	tilemap.set_cell(cell, 0, Vector2i(1, 0)) ## set cell as exclamation mark
 
-@rpc("any_peer", "call_remote")
 func check_lose() -> void:
 	if cruiser.sinked and submarine.sinked and destroyer.sinked:
-		GameManager.rpc("declare_winner", multiplayer.get_unique_id()) ## declare winner
+		GameManager.setlost()
+		return
 	
 	history.add_entry(
-		"Winner: Player 1"
+		"Winner: "
 	)
 
 	history.add_entry(
@@ -404,3 +422,101 @@ func check_shrink_zone_damage() -> void:
 			history.add_entry(
 				"%s took storm damage" % ship.ship_name
 			)
+
+func animate_ship_to(ship: Node2D, target_pos: Vector2) -> void:
+	var tween = create_tween()
+	tween.tween_property(ship, "global_position", target_pos, 0.25)\
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		
+
+func dis_able_buttons(ending: bool) -> void:
+	if cruiser.sinked == false:
+		radar_button.disabled = ending
+	move_up.disabled = ending
+	move_down.disabled = ending
+	move_left.disabled = ending
+	move_right.disabled = ending
+	undo.disabled = ending
+	
+func get_player_state() -> Dictionary:
+	return {
+		"min_x": min_x,
+		"max_x": max_x,
+		"min_y": min_y,
+		"max_y": max_y,
+		
+		"submarine": {
+			"positions": submarine.get_ship_pos(),
+			"vertical": submarine._is_vertical(),
+			"hp": submarine.hit_point,
+			"sinked": submarine.sinked
+			},
+		
+		"destroyer": {
+			"positions": destroyer.get_ship_pos(),
+			"vertical": destroyer._is_vertical(),
+			"hp": destroyer.hit_point,
+			"sinked": destroyer.sinked
+			},
+		
+		"cruiser": {
+			"positions": cruiser.get_ship_pos(),
+			"vertical": cruiser._is_vertical(),
+			"hp": cruiser.hit_point,
+			"sinked": cruiser.sinked
+			},
+		
+		"cells": get_player_board_cells()
+		}
+
+func load_player_state(state: Dictionary) -> void:
+	min_x = state["min_x"]
+	max_x = state["max_x"]
+	min_y = state["min_y"]
+	max_y = state["max_y"]
+	
+	restore_ship(submarine, state["submarine"])
+	restore_ship(destroyer, state["destroyer"])
+	restore_ship(cruiser, state["cruiser"])
+	
+	submarine_life.update_health(submarine.hit_point)
+	destroyer_life.update_health(destroyer.hit_point)
+	cruiser_life.update_health(cruiser.hit_point)
+	
+	redraw_player_board(state["cells"])
+
+func restore_ship(ship, data):
+	ship.set_ship_pos(data["positions"])
+	ship.set_is_vertical(data["vertical"])
+	
+	ship.hit_point = data["hp"]
+	ship.sinked = data["sinked"]
+	prepare_ship(ship)
+	
+func redraw_player_board(enemy_cells: Dictionary) -> void:
+	
+	var cells = enemy_cells["cells"]
+	var cover = enemy_cells["cover_cells"]
+	
+	for cover_cell in cover:
+		if cover_cell["source"] == -1:
+			tilemap.set_cell(cover_cell["pos"], 0, Vector2i(1, 0))
+	
+	for cell in cells:
+		if cell["source"] != -1:
+			if tilemap.get_cell_source_id(cell["pos"]) != -1:
+				continue
+			tilemap.set_cell( cell["pos"], cell["source"], cell["atlas"])
+
+func get_player_board_cells() -> Array:
+		var cells = []
+		for x in range(15):
+			for y in range(15):
+				var pos = Vector2i(x, y)
+				
+				cells.append({
+					"pos": pos,
+					"source": tilemap.get_cell_source_id(pos),
+					"atlas": tilemap.get_cell_atlas_coords(pos),
+				}) 
+		return cells

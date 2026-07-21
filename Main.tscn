@@ -4,8 +4,8 @@
 [ext_resource type="PackedScene" uid="uid://dwpba5ca16cs1" path="res://PlayerBoard.tscn" id="2_r0du0"]
 [ext_resource type="Script" uid="uid://dcxy0vxwon3oa" path="res://game_manager.gd" id="3_r0du0"]
 [ext_resource type="Script" uid="uid://cvyqjgg8o400" path="res://event_manager.gd" id="4_cm0pq"]
-[ext_resource type="Script" uid="uid://brhei7rvagr83" path="res://MatchHistoryManager.gd" id="5_fos0i"]
 [ext_resource type="PackedScene" uid="uid://bv5ibi0fv84qh" path="res://undo_button.tscn" id="6_3dxm6"]
+[ext_resource type="FontFile" uid="uid://be0c25qbc217d" path="res://font404 2.ttf" id="7_lgr22"]
 
 [node name="Node2D" type="Node2D" unique_id=2127168724]
 
@@ -22,12 +22,24 @@ script = ExtResource("3_r0du0")
 [node name="EventManager" type="Node" parent="." unique_id=1159943984]
 script = ExtResource("4_cm0pq")
 
-[node name="MatchHistoryManager" type="Node" parent="." unique_id=1136478388]
-script = ExtResource("5_fos0i")
-
 [node name="UNDO BUTTON" parent="." unique_id=648677106 instance=ExtResource("6_3dxm6")]
-offset_left = 529.0
-offset_top = 260.0
-offset_right = 586.0
-offset_bottom = 295.0
-scale = Vector2(0.5574401, 0.9118462)
+offset_left = 513.0
+offset_top = 264.00003
+offset_right = 704.0
+offset_bottom = 486.00003
+scale = Vector2(0.18101035, 0.15276214)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=705680295]
+position = Vector2(205, 194)
+scale = Vector2(1.0047172, 0.5975756)
+zoom = Vector2(1.1, 1)
+
+[node name="Button" type="Button" parent="." unique_id=1766981493]
+offset_left = 116.0
+offset_top = 397.0
+offset_right = 270.0
+offset_bottom = 433.0
+theme_override_fonts/font = ExtResource("7_lgr22")
+text = "READY"
+
+[connection signal="pressed" from="Button" to="GameManager" method="_on_button_pressed"]

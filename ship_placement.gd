@@ -32,6 +32,14 @@ func _ready() -> void:
 		ship.visible = false
 
 		ship.is_placed = false
+	
+	GlobalTimer.time_up.connect(on_placement_time_up)
+	if NetworkManager.is_syncing:
+		NetworkManager.is_syncing = false
+		rpc_id(NetworkManager.opponent_id, "request_sync_from_opponent")
+	else:
+		GlobalTimer.start_timer()
+	
 
 func _process(_delta: float) -> void:
 
@@ -271,8 +279,9 @@ func _on_ready_button_pressed() -> void:
 		
 		PlayerBoard.curr_layout = curr_layout
 		
-		rpc_id(NetworkManager.opponent_id, "send_layout_to_enemy", curr_layout)
-		rpc_id(NetworkManager.opponent_id, "notify_ready_to_opponent")
+		if NetworkManager.has_valid_opponent():
+			rpc_id(NetworkManager.opponent_id, "send_layout_to_enemy", curr_layout)
+			rpc_id(NetworkManager.opponent_id, "notify_ready_to_opponent")
 		
 		proceed_to_main()
 
@@ -284,11 +293,13 @@ func notify_ready_to_opponent() -> void:
 @rpc("any_peer", "call_remote")
 func send_layout_to_enemy(opponent_layout: Dictionary) -> void:
 	EnemyBoard.opp_layout = opponent_layout
-	
+
+
 func proceed_to_main() -> void:
 	if ownself_ready and opponent_ready:
 		print("Transitioning into the game arena...")
 		undo.clear_actions()
+		NetworkManager.set_curr_scene("res://Main.tscn")
 		get_tree().call_deferred("change_scene_to_file", "res://Main.tscn")
 		
 
@@ -305,3 +316,85 @@ func _on_submarine_initialise_pressed() -> void:
 func _on_destroyer_initialise_pressed() -> void:
 
 	start_placing("destroyer")
+	
+
+func on_placement_time_up() -> void:
+	if ownself_ready:
+		if NetworkManager.has_valid_opponent() == false:
+			NetworkManager.auto_win_no_opponent()
+		return
+	
+
+	GlobalTimer.add_idle_count()
+	auto_place_remaining_ships()
+	_on_ready_button_pressed()
+
+func auto_place_remaining_ships() -> void:
+	
+	for ship in ships.values():
+		if ship.is_placed:
+			continue
+		
+		auto_place_ship(ship)
+		
+func auto_place_ship(ship) -> void:
+	
+	current_ship = ship
+	current_ship.visible = true
+	
+	var possible_position := []
+	
+	for is_vertical in [true, false]:
+		
+		var max_x = GRID_SIZE - (
+			1 if is_vertical else current_ship.length
+		)
+		var max_y = GRID_SIZE - (
+			current_ship.length if is_vertical else 1
+		)
+		
+		if max_x < 0 or max_y < 0:
+			continue
+		
+		for x in range(max_x + 1):
+			for y in range(max_y + 1):
+				possible_position.append({
+					"head": Vector2i(x,y),
+					"is_vertical": is_vertical
+				})
+	
+	possible_position.shuffle()
+	
+	for random_pos in possible_position:
+		
+		current_ship.is_vertical = random_pos["is_vertical"]
+		
+		update_positions(random_pos["head"])
+		
+		if is_current_position_valid() and ship_manager.place_ship(current_ship, current_ship.positions):
+			undo.store_action({
+					"type": "placement",
+					"ship": current_ship
+				})
+			current_ship.is_placed = true
+			break
+	
+	current_ship = null
+	
+@rpc("any_peer", "call_remote", "reliable")
+func request_sync_from_opponent() -> void:
+	var sender_id = multiplayer.get_remote_sender_id()
+	var layout = PlayerBoard.curr_layout if ownself_ready else {}
+	rpc_id(sender_id, "receive_sync_from_opponent", layout, ownself_ready)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func receive_sync_from_opponent(opp_layout: Dictionary, opp_ready: bool) -> void:
+	opponent_ready = opp_ready
+	
+	if opp_ready:
+		EnemyBoard.opp_layout = opp_layout
+	
+	if not ownself_ready:
+		GlobalTimer.start_timer()
+	

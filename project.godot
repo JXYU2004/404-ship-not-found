@@ -21,6 +21,8 @@ config/features=PackedStringArray("4.6", "GL Compatibility")
 [autoload]
 
 NetworkManager="*uid://bvwa6dsqw64ny"
+MatchHistoryManager="*uid://brhei7rvagr83"
+GlobalTimer="*uid://w0sptduu0c0e"
 
 [editor_plugins]
 
