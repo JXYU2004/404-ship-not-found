@@ -24,6 +24,11 @@ NetworkManager="*uid://bvwa6dsqw64ny"
 MatchHistoryManager="*uid://brhei7rvagr83"
 GlobalTimer="*uid://w0sptduu0c0e"
 
+[display]
+
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godotsteam/plugin.cfg")

@@ -14,6 +14,7 @@ static var curr_layout = null
 @onready var destroyer_life = $"Destroyer life"
 @onready var cruiser_life = $"cruiser life"
 @onready var radar = $radar
+@onready var radar_sound = $RadarSound
 
 @onready var undo = $"../UNDO BUTTON"
 @onready var radar_button = $"radar button"
@@ -21,6 +22,7 @@ static var curr_layout = null
 @onready var move_down = $"Move Down"
 @onready var move_right = $"Move Right"
 @onready var move_left = $"Move Left"
+@onready var move_sound = $MoveSound
 
 var active_ship = null
 var moving = false
@@ -139,6 +141,7 @@ func _on_move_left_pressed() -> void:
 		
 		animate_ship_to(active_ship, active_ship.global_position + Vector2(-26, 0))
 		active_ship.move(0)
+		move_sound.play()
 		history.total_movements += 1
 		GameManager.consume_energy(1)
 		moving = false
@@ -170,6 +173,7 @@ func _on_move_up_pressed() -> void:
 		undo.store_action(data)
 		animate_ship_to(active_ship, active_ship.global_position + Vector2(0, -26))
 		active_ship.move(1)
+		move_sound.play()
 		history.total_movements += 1
 		GameManager.consume_energy(1)
 		moving = false
@@ -202,6 +206,7 @@ func _on_move_right_pressed() -> void:
 		undo.store_action(data)
 		animate_ship_to(active_ship, active_ship.global_position + Vector2(26, 0))
 		active_ship.move(2)
+		move_sound.play()
 		history.total_movements += 1
 		GameManager.consume_energy(1)
 		moving = false
@@ -234,6 +239,7 @@ func _on_move_down_pressed() -> void:
 		undo.store_action(data)
 		animate_ship_to(active_ship, active_ship.global_position + Vector2(0, 26))
 		active_ship.move(3)
+		move_sound.play()
 		history.total_movements += 1
 		GameManager.consume_energy(1)
 		moving = false
@@ -320,6 +326,7 @@ func _on_radar_button_pressed() -> void:
 		return
 	
 	if GameManager.consume_energy(2):
+		radar_sound.play()
 		history.add_entry(
 			"Turn %d: Cruiser Scout activated"
 			% GameManager.currTurn

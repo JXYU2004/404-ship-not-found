@@ -173,8 +173,6 @@ func get_steam_id_for_peer(peer_id: int) -> int:
 	
 func on_peer_disconnected(id: int) -> void:
 	print("Opponent disconnected. Peer id:", id)
-	#reset_match()
-	#get_tree().change_scene_to_file("res://menu.tscn")
 
 func is_host() -> bool:
 	return Steam.getSteamID() == Steam.getLobbyOwner(lobby_id)
@@ -216,7 +214,6 @@ func get_player_steam_name(id: int) -> String:
 	
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
-		#reset_match()
 		get_tree().quit()
 
 func save_lobby_id(id: int) -> void:

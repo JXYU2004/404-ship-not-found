@@ -6,14 +6,60 @@
 [node name="EndScene" type="Node2D" unique_id=1990753312]
 script = ExtResource("1_jvrxn")
 
-[node name="Label" type="Label" parent="." unique_id=1180899494]
+[node name="TitleLabel" type="Label" parent="." unique_id=1180899494]
 offset_left = 498.0
-offset_top = 218.0
+offset_top = 136.0
 offset_right = 687.0
-offset_bottom = 258.0
+offset_bottom = 176.0
 theme_override_fonts/font = ExtResource("2_vitp6")
 theme_override_font_sizes/font_size = 36
 text = "TESTING"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=471191974]
+custom_minimum_size = Vector2(20, 0)
+offset_left = 361.00003
+offset_top = 193.0
+offset_right = 683.00006
+offset_bottom = 387.0
+scale = Vector2(0.886398, 1.8511938)
+
+[node name="TurnsLabel" type="Label" parent="VBoxContainer" unique_id=1134219218]
+layout_mode = 2
+text = "TurnsLabel"
+horizontal_alignment = 1
+
+[node name="EnergyLabel" type="Label" parent="VBoxContainer" unique_id=638541929]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "EnergyLabel"
+horizontal_alignment = 1
+
+[node name="SpecialAttackLabel" type="Label" parent="VBoxContainer" unique_id=1615073033]
+layout_mode = 2
+text = "SpecialAttackLabel"
+horizontal_alignment = 1
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="." unique_id=837259447]
+offset_left = 532.0
+offset_top = 192.0
+offset_right = 854.0
+offset_bottom = 386.0
+scale = Vector2(0.95899516, 1.8600006)
+
+[node name="MovementLabel" type="Label" parent="VBoxContainer2" unique_id=1268323002]
+layout_mode = 2
+text = "MovementLabel"
+horizontal_alignment = 1
+
+[node name="AttackLabel" type="Label" parent="VBoxContainer2" unique_id=1189791133]
+layout_mode = 2
+text = "AttackLabel"
+horizontal_alignment = 1
+
+[node name="AccuracyLabel" type="Label" parent="VBoxContainer2" unique_id=531456207]
+layout_mode = 2
+text = "AccuracyLabel"
+horizontal_alignment = 1
 
 [node name="Button" type="Button" parent="." unique_id=496331071]
 offset_left = 466.0
@@ -21,5 +67,8 @@ offset_top = 400.0
 offset_right = 723.0
 offset_bottom = 465.0
 text = "MENU"
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1803197976]
+position = Vector2(579, 331)
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://d3wfhws8mnua0" path="res://ship(test).tscn" id="9_elxm0"]
 [ext_resource type="FontFile" uid="uid://be0c25qbc217d" path="res://font404 2.ttf" id="10_4p1xe"]
 [ext_resource type="PackedScene" uid="uid://bv5ibi0fv84qh" path="res://undo_button.tscn" id="10_746qv"]
+[ext_resource type="PackedScene" uid="uid://cdud3n51qsdaq" path="res://time_indicate.tscn" id="12_pei2v"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kj3p2"]
 texture = ExtResource("2_746qv")
@@ -108,13 +109,13 @@ texture_normal = ExtResource("8_6ml7d")
 stretch_mode = 0
 
 [node name="Ready Button" type="Button" parent="." unique_id=58389294]
-offset_left = 899.00006
-offset_top = 207.0
-offset_right = 958.00006
-offset_bottom = 238.0
+offset_left = 896.0
+offset_top = 204.99998
+offset_right = 984.0315
+offset_bottom = 235.99998
 scale = Vector2(1.1132374, 2.2891018)
 theme_override_fonts/font = ExtResource("10_4p1xe")
-theme_override_font_sizes/font_size = 21
+theme_override_font_sizes/font_size = 11
 text = "READY"
 
 [node name="UNDO BUTTON" parent="." unique_id=648677106 instance=ExtResource("10_746qv")]
@@ -127,6 +128,15 @@ scale = Vector2(0.22230047, 0.21747318)
 [node name="Camera2D" type="Camera2D" parent="." unique_id=363040153]
 position = Vector2(722, 345)
 zoom = Vector2(1.1, 1.2)
+
+[node name="Time_indicate" parent="." unique_id=522439352 instance=ExtResource("12_pei2v")]
+offset_left = 982.0
+offset_top = 130.0
+offset_right = 1002.0
+offset_bottom = 145.0
+scale = Vector2(1.0583512, 1.4531741)
+text = "00"
+horizontal_alignment = 2
 
 [connection signal="pressed" from="UI/CruiserInitialise" to="PlacementLayer" method="_on_cruiser_initialise_pressed"]
 [connection signal="pressed" from="UI/SubmarineInitialise" to="PlacementLayer" method="_on_submarine_initialise_pressed"]

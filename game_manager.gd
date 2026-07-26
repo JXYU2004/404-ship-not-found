@@ -197,6 +197,7 @@ func declare_winner(i_lost: bool, opp_lost: bool) -> void:
 		% currTurn
 	)
 	
+	history.save_final_stats(currTurn)
 	history.save_match()
 	NetworkManager.set_curr_scene("res://end_scene.tscn")
 	get_tree().change_scene_to_file("res://end_scene.tscn")
@@ -209,9 +210,10 @@ func _on_button_pressed() -> void:
 		end_my_turn()
 			
 func _on_turn_time_up() -> void:
+	if NetworkManager.has_valid_opponent() == false:
+		NetworkManager.auto_win_no_opponent()
+		return
 	if myTurnEnd:
-		if NetworkManager.has_valid_opponent() == false:
-			NetworkManager.auto_win_no_opponent()
 		return
  
 	GlobalTimer.idle_counter += 1

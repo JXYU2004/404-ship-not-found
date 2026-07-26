@@ -12,14 +12,14 @@ var attack_coord : Array[Vector2i] = []
 var preview_tiles = []
 var current_preview_coords : Array[Vector2i] = []
 
-
-
 var hit_count := 0
 
 @onready var undo = $"../UNDO BUTTON"
 
 @onready var cover = $Cover
 @onready var history = MatchHistoryManager
+@onready var bomb_sound = $BombSound
+@onready var radar_sound = $RadarSound
 
 @onready var submarine: Node2D = $Submarine
 @onready var destroyer: Node2D = $Destroyer
@@ -162,6 +162,7 @@ func _on_special_attack_horizontal_pressed() -> void:
 func attack_at_pos(pos: Vector2i) -> void:
 	var inside_board = _inside_board(pos)
 	if attacking and inside_board and GameManager.consume_energy(1):
+		bomb_sound.play()
 		history.normal_attacks += 1
 		history.add_entry(
 			"Turn %d: Normal Attack used"
@@ -195,6 +196,7 @@ func attack_at_pos(pos: Vector2i) -> void:
 func special_attack_at_pos(pos: Vector2i) -> void:
 	var inside_board = _inside_board(pos)
 	if attacking and inside_board and GameManager.consume_energy(2):
+		bomb_sound.play()
 		history.special_attacks += 1
 		history.add_entry(
 			"Turn %d: Cluster Strike used"
@@ -232,7 +234,7 @@ func special_attack_at_pos(pos: Vector2i) -> void:
 func special_attack_at_pos_horiorvet(pos: Vector2i) -> void:
 	var inside_board = _inside_board(pos)
 	if attacking and inside_board and GameManager.consume_energy(2):
-		
+		bomb_sound.play()
 		history.special_attacks += 1
 		
 		if attack_mode == "special horizontal":

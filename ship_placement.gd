@@ -11,6 +11,8 @@ const BOARD_OFFSET = Vector2i(-3, -3)
 
 @onready var undo = $"../UNDO BUTTON"
 
+@onready var ready_button = $"../Ready Button"
+
 var ownself_ready = false
 
 var opponent_ready = false
@@ -260,6 +262,7 @@ func _check_ready() -> bool:
 
 func _on_ready_button_pressed() -> void:
 	if _check_ready():
+		ready_button.text = "WAITING..."
 		ownself_ready = true
 		undo.disabled = true
 		var curr_layout = {
@@ -319,9 +322,10 @@ func _on_destroyer_initialise_pressed() -> void:
 	
 
 func on_placement_time_up() -> void:
+	if NetworkManager.has_valid_opponent() == false:
+		NetworkManager.auto_win_no_opponent()
+		return
 	if ownself_ready:
-		if NetworkManager.has_valid_opponent() == false:
-			NetworkManager.auto_win_no_opponent()
 		return
 	
 

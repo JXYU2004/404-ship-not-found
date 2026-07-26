@@ -8,9 +8,31 @@ var special_attacks = 0
 var hits = 0
 var misses = 0
 
+var final_turns := 0
+var final_movements := 0
+var final_energy_used := 0
+var final_normal_attacks := 0
+var final_special_attacks := 0
+var final_accuracy := 0.0
+
 func add_entry(entry : String):
 	match_log.append(entry)
 
+
+func save_final_stats(turns: int):
+
+	final_turns = turns
+	final_movements = total_movements
+	final_energy_used = energy_used
+	final_normal_attacks = normal_attacks
+	final_special_attacks = special_attacks
+
+	var total_shots = hits + misses
+
+	if total_shots > 0:
+		final_accuracy = float(hits) / total_shots * 100.0
+	else:
+		final_accuracy = 0.0
 
 func save_match():
 	
@@ -57,10 +79,18 @@ func _ready():
 
 
 
-func _reset_counters() -> void:
+func reset_counters():
+
 	total_movements = 0
 	energy_used = 0
 	normal_attacks = 0
 	special_attacks = 0
 	hits = 0
 	misses = 0
+
+	final_turns = 0
+	final_movements = 0
+	final_energy_used = 0
+	final_normal_attacks = 0
+	final_special_attacks = 0
+	final_accuracy = 0.0

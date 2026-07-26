@@ -3,7 +3,7 @@ extends Node
 signal time_up
 
 
-var time := 30.0
+var time := 60.0
 
 var idle_counter := 0
 
@@ -29,7 +29,7 @@ func _process(delta: float) -> void:
 	
 
 func start_timer() -> void:
-	time = 30
+	time = 60
 	running = true
 
 func add_idle_count() -> void:

@@ -3,9 +3,13 @@
 [ext_resource type="PackedScene" uid="uid://mq6sxar3jg1q" path="res://EnemyBoard.tscn" id="1_uu6xs"]
 [ext_resource type="PackedScene" uid="uid://dwpba5ca16cs1" path="res://PlayerBoard.tscn" id="2_r0du0"]
 [ext_resource type="Script" uid="uid://dcxy0vxwon3oa" path="res://game_manager.gd" id="3_r0du0"]
+[ext_resource type="AudioStream" uid="uid://bjr4ihphi3tf6" path="res://Audio/RadarSound.mp3" id="3_trn2v"]
+[ext_resource type="AudioStream" uid="uid://drwwft3coskpt" path="res://Audio/MoveSound.mp3" id="4_03owx"]
 [ext_resource type="Script" uid="uid://cvyqjgg8o400" path="res://event_manager.gd" id="4_cm0pq"]
+[ext_resource type="AudioStream" uid="uid://b440hdwjtynf4" path="res://Audio/BombSound.mp3" id="4_lgr22"]
 [ext_resource type="PackedScene" uid="uid://bv5ibi0fv84qh" path="res://undo_button.tscn" id="6_3dxm6"]
 [ext_resource type="FontFile" uid="uid://be0c25qbc217d" path="res://font404 2.ttf" id="7_lgr22"]
+[ext_resource type="PackedScene" uid="uid://cdud3n51qsdaq" path="res://time_indicate.tscn" id="10_wkp8b"]
 
 [node name="Node2D" type="Node2D" unique_id=2127168724]
 
@@ -13,11 +17,38 @@
 visible = false
 player_board = NodePath("../PlayerBoard")
 
+[node name="RadarSound" type="AudioStreamPlayer" parent="EnemyBoard" unique_id=644588794]
+stream = ExtResource("3_trn2v")
+
+[node name="BombSound" type="AudioStreamPlayer" parent="EnemyBoard" unique_id=981513577]
+stream = ExtResource("4_lgr22")
+
+[node name="MoveSound" type="AudioStreamPlayer" parent="EnemyBoard" unique_id=152017382]
+stream = ExtResource("4_03owx")
+
 [node name="PlayerBoard" parent="." unique_id=1509560816 node_paths=PackedStringArray("enemy_board") instance=ExtResource("2_r0du0")]
 enemy_board = NodePath("../EnemyBoard")
 
+[node name="MoveSound" type="AudioStreamPlayer" parent="PlayerBoard" unique_id=767333160]
+stream = ExtResource("4_03owx")
+
+[node name="BombSound" type="AudioStreamPlayer" parent="PlayerBoard" unique_id=1120183282]
+stream = ExtResource("4_lgr22")
+
+[node name="RadarSound" type="AudioStreamPlayer" parent="PlayerBoard" unique_id=250421828]
+stream = ExtResource("3_trn2v")
+
 [node name="GameManager" type="Node" parent="." unique_id=292413146]
 script = ExtResource("3_r0du0")
+
+[node name="RadarSound" type="AudioStreamPlayer" parent="GameManager" unique_id=530616236]
+stream = ExtResource("3_trn2v")
+
+[node name="BombSound" type="AudioStreamPlayer" parent="GameManager" unique_id=1853846272]
+stream = ExtResource("4_lgr22")
+
+[node name="MoveSound" type="AudioStreamPlayer" parent="GameManager" unique_id=1056215158]
+stream = ExtResource("4_03owx")
 
 [node name="EventManager" type="Node" parent="." unique_id=1159943984]
 script = ExtResource("4_cm0pq")
@@ -41,5 +72,15 @@ offset_right = 270.0
 offset_bottom = 433.0
 theme_override_fonts/font = ExtResource("7_lgr22")
 text = "READY"
+
+[node name="Time_indicate" parent="." unique_id=522439352 instance=ExtResource("10_wkp8b")]
+z_index = 5
+offset_left = 543.00006
+offset_top = -45.0
+offset_right = 563.00006
+offset_bottom = -26.0
+scale = Vector2(0.94892645, 1.3704226)
+text = "00"
+horizontal_alignment = 2
 
 [connection signal="pressed" from="Button" to="GameManager" method="_on_button_pressed"]
