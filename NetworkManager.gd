@@ -173,6 +173,27 @@ func get_steam_id_for_peer(peer_id: int) -> int:
 	
 func on_peer_disconnected(id: int) -> void:
 	print("Opponent disconnected. Peer id:", id)
+	check_if_i_disconnected()
+
+func check_if_i_disconnected() -> void:
+	var http := HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(on_connectivity_checked.bind(http))
+	var err := http.request("https://api.steampowered.com")
+	if err != OK:
+		http.queue_free()
+		start_self_reconnect()
+
+func on_connectivity_checked(result: int, code: int, _headers, _body, http: HTTPRequest) -> void:
+	http.queue_free()
+	var im_online := result == HTTPRequest.RESULT_SUCCESS and code > 0
+	if not im_online:
+		start_self_reconnect()
+
+func start_self_reconnect() -> void:
+	print("I lost connection")
+	get_tree().change_scene_to_file("res://menu.tscn")
+	print("Check your network connections and relaunch the game")
 
 func is_host() -> bool:
 	return Steam.getSteamID() == Steam.getLobbyOwner(lobby_id)
