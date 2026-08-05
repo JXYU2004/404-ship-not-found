@@ -8,7 +8,7 @@ var max_x := 14
 var min_y := 0
 var max_y := 14
 
-# Called when the node enters the scene tree for the first time.
+# Called when the node enters the scene tree for the first time. Yes
 func _ready() -> void:
 	pass
 
