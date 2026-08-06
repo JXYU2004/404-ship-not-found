@@ -76,12 +76,12 @@ func on_lobby_created(connect_result: int, new_lobby_id: int) -> void:
 			multiplayer.multiplayer_peer = peer
 			lobby_created_success.emit()
 			if searching_match:
-				await get_tree().create_timer(1.5).timeout
-				check_other_lobby = true
-				Steam.addRequestLobbyListDistanceFilter(Steam.LOBBY_DISTANCE_FILTER_WORLDWIDE)
-				Steam.addRequestLobbyListStringFilter("quick_match", "true", Steam.LOBBY_COMPARISON_EQUAL)
-				Steam.addRequestLobbyListStringFilter("version", "1.0", Steam.LOBBY_COMPARISON_EQUAL)
-				Steam.requestLobbyList()
+				while searching_match:
+					await get_tree().create_timer(1.5).timeout
+					Steam.addRequestLobbyListDistanceFilter(Steam.LOBBY_DISTANCE_FILTER_WORLDWIDE)
+					Steam.addRequestLobbyListStringFilter("quick_match", "true", Steam.LOBBY_COMPARISON_EQUAL)
+					Steam.addRequestLobbyListStringFilter("version", "1.0", Steam.LOBBY_COMPARISON_EQUAL)
+					Steam.requestLobbyList()
 		else:
 			searching_match = false
 			host_failed.emit()
@@ -189,26 +189,26 @@ func on_lobby_joined(joined_lobby_id: int, _permissions: int, _locked: bool, res
 func on_peer_connected(id: int) -> void:
 	if id == multiplayer.get_unique_id():
 		return
-	
+
 	opponent_id = id
-	
+
 	searching_match = false
-	
+
 	print("Opponent connected! Peer ID: ", id)
-	
+
 	if is_host():
 		Steam.setLobbyData(lobby_id, "quick_match", "false")
-	
+
 	save_lobby_id(lobby_id)
-	
+
 	rpc_id(id, "receive_scene_sync", curr_scene)
-	
+
 	await get_tree().process_frame
 	match_ready.emit()
 
 func get_steam_id_for_peer(peer_id: int) -> int:
 	return peer.get_peer_steam_id(peer_id)
-	
+
 func on_peer_disconnected(id: int) -> void:
 	print("Opponent disconnected. Peer id:", id)
 	check_if_i_disconnected()
@@ -244,22 +244,22 @@ func reset_match() -> void:
 	if multiplayer.multiplayer_peer != null:
 		multiplayer.multiplayer_peer.close()
 		multiplayer.multiplayer_peer = null
-	
+
 	peer = null
 
 	if lobby_id != 0:
 		Steam.leaveLobby(lobby_id)
 		lobby_id = 0
-	
-	
+
+
 	GlobalTimer.reset_idle_count()
-	
+
 	curr_scene = ""
 
 func get_player_steam_name(id: int) -> String:
 	if id == multiplayer.get_unique_id():
 		return Steam.getPersonaName()
-		
+
 	var opponent_steam_id: int = 0
 	if is_host():
 		opponent_steam_id = Steam.getLobbyMemberByIndex(lobby_id, 1)
@@ -268,9 +268,9 @@ func get_player_steam_name(id: int) -> String:
 
 	if opponent_steam_id != 0:
 		return Steam.getFriendPersonaName(opponent_steam_id)
-		
+
 	return "Unknown opponent"
-	
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		get_tree().quit()
@@ -300,7 +300,7 @@ func clear_saved_lobby_id() -> void:
 
 func set_curr_scene(current_scene: String) -> void:
 	curr_scene = current_scene
-	
+
 @rpc("any_peer", "call_remote", "reliable")
 func receive_scene_sync(path: String) -> void:
 	if path != "":
@@ -314,9 +314,9 @@ func has_valid_opponent() -> bool:
 func auto_win_no_opponent() -> void:
 	EndScene.host_won = true
 	EndScene.is_draw = false
-	
+
 	MatchHistoryManager.add_entry("Opponent disconnected during placement")
 	MatchHistoryManager.add_entry("Winner: " + Steam.getPersonaName())
 	MatchHistoryManager.save_match()
-	
+
 	get_tree().change_scene_to_file("res://end_scene.tscn")
