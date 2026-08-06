@@ -23,28 +23,30 @@ var curr_scene := ""
 
 var is_syncing := false
 
+var check_other_lobby := false
+
 func _ready() -> void:
-	
+
 	get_tree().set_auto_accept_quit(false)
-	
+
 	print(get_path())
-	
+
 	var init_res: Dictionary = Steam.steamInitEx()
 	if init_res["status"] > 0:
 		print("failed")
 		return
-	
-	
+
+
 	Steam.lobby_created.connect(on_lobby_created)
 	Steam.lobby_joined.connect(on_lobby_joined)
 	Steam.join_requested.connect(on_join_requested)
 	Steam.lobby_match_list.connect(on_lobby_match_list)
-	
+
 	multiplayer.peer_connected.connect(on_peer_connected)
 	multiplayer.peer_disconnected.connect(on_peer_disconnected)
-	
+
 	await get_tree().process_frame
-	
+
 	var saved_id := load_saved_lobby_id()
 	if saved_id != 0:
 		print("Found saved lobby, attempting rejoin: ", saved_id)
@@ -52,7 +54,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	Steam.run_callbacks()
-	
+
 
 func host_lobby(lobby_type: int) -> void:
 	print("creating lobby")
@@ -63,16 +65,23 @@ func on_lobby_created(connect_result: int, new_lobby_id: int) -> void:
 	if connect_result == 1:
 		lobby_id = new_lobby_id
 		print("lobby created, id: ", lobby_id)
-		
+
 		if searching_match:
 			Steam.setLobbyData(lobby_id, "quick_match", "true")
 			Steam.setLobbyData(lobby_id, "version", "1.0")
-		
+
 		peer = SteamMultiplayerPeer.new()
 		var error = peer.create_host(0)
 		if error == OK:
 			multiplayer.multiplayer_peer = peer
 			lobby_created_success.emit()
+			if searching_match:
+				await get_tree().create_timer(1.5).timeout
+				check_other_lobby = true
+				Steam.addRequestLobbyListDistanceFilter(Steam.LOBBY_DISTANCE_FILTER_WORLDWIDE)
+				Steam.addRequestLobbyListStringFilter("quick_match", "true", Steam.LOBBY_COMPARISON_EQUAL)
+				Steam.addRequestLobbyListStringFilter("version", "1.0", Steam.LOBBY_COMPARISON_EQUAL)
+				Steam.requestLobbyList()
 		else:
 			searching_match = false
 			host_failed.emit()
@@ -81,38 +90,68 @@ func on_lobby_created(connect_result: int, new_lobby_id: int) -> void:
 func quick_match() -> void:
 	tries = 0
 	searching_match = true
-	Steam.addRequestLobbyListDistanceFilter(Steam.LOBBY_DISTANCE_FILTER_WORLDWIDE) 
+	Steam.addRequestLobbyListDistanceFilter(Steam.LOBBY_DISTANCE_FILTER_WORLDWIDE)
 	Steam.addRequestLobbyListStringFilter("quick_match", "true", Steam.LOBBY_COMPARISON_EQUAL)
 	Steam.addRequestLobbyListStringFilter("version", "1.0", Steam.LOBBY_COMPARISON_EQUAL)
 	Steam.requestLobbyList()
 
 func on_lobby_match_list(lobbies: Array) -> void:
 	print("Found ", lobbies.size(), " lobbies")
-	
+
+	if check_other_lobby:
+		check_other_lobby = false
+
+		if lobbies.size() == 1:
+			return
+
+		var smallest_lobby_id := lobby_id
+
+		for lobby in lobbies:
+			if smallest_lobby_id >= lobby:
+				smallest_lobby_id = lobby
+
+		if smallest_lobby_id == lobby_id:
+			print("rejoin the search queue")
+
+			if multiplayer.multiplayer_peer != null:
+				multiplayer.multiplayer_peer.close()
+				multiplayer.multiplayer_peer = null
+
+			peer = null
+
+			Steam.leaveLobby(lobby_id)
+			lobby_id = 0
+
+			quick_match()
+
+		return
+
+
+
 	for lobby in lobbies:
 		var check_owner = Steam.getLobbyOwner(lobby)
-		
+
 		if check_owner == Steam.getSteamID():
 			continue
-			
+
 		var members = Steam.getNumLobbyMembers(lobby)
-		
+
 		if members < 2:
 			print("Joining lobby ", lobby)
 			Steam.joinLobby(lobby)
 			return
-	
+
 	tries += 1
-	
+
 	if tries >= max_tries:
 		print("No available lobbies")
 		host_lobby(Steam.LOBBY_TYPE_PUBLIC)
 	else:
-		var delay := randf_range(1.0, 2.5) 
+		var delay := randf_range(1.0, 2.5)
 		await get_tree().create_timer(delay).timeout
 		if not searching_match:
 			return
-		Steam.addRequestLobbyListDistanceFilter(Steam.LOBBY_DISTANCE_FILTER_WORLDWIDE) 
+		Steam.addRequestLobbyListDistanceFilter(Steam.LOBBY_DISTANCE_FILTER_WORLDWIDE)
 		Steam.addRequestLobbyListStringFilter("quick_match", "true", Steam.LOBBY_COMPARISON_EQUAL)
 		Steam.addRequestLobbyListStringFilter("version", "1.0", Steam.LOBBY_COMPARISON_EQUAL)
 		Steam.requestLobbyList()
@@ -120,7 +159,7 @@ func on_lobby_match_list(lobbies: Array) -> void:
 func open_invite_overlay() -> void:
 	if lobby_id != 0:
 		Steam.activateGameOverlayInviteDialog(lobby_id)
-	
+
 func on_join_requested(requested_lobby_id: int, _friend_id: int) -> void:
 	print("Accepted invite! Joining lobby: ", requested_lobby_id)
 	Steam.joinLobby(requested_lobby_id)
@@ -129,28 +168,27 @@ func on_lobby_joined(joined_lobby_id: int, _permissions: int, _locked: bool, res
 	if response == 1:
 		if multiplayer.multiplayer_peer != null:
 			multiplayer.multiplayer_peer.close()
-		
+
 		searching_match = false
-		
+
 		lobby_id = joined_lobby_id
 		var host_id = Steam.getLobbyOwner(joined_lobby_id)
-		peer = SteamMultiplayerPeer.new() 
+		peer = SteamMultiplayerPeer.new()
 		var error = peer.create_client(host_id, 0)
 		if error == OK:
 			multiplayer.multiplayer_peer = peer
 		else:
-			join_failed.emit() 
+			join_failed.emit()
 			clear_saved_lobby_id()
 			print("Failed to start client: ", error)
 	else:
 		join_failed.emit()
 		clear_saved_lobby_id()
 		print("failed to join lobby")
-	
+
 func on_peer_connected(id: int) -> void:
 	if id == multiplayer.get_unique_id():
 		return
-	
 	
 	opponent_id = id
 	
